@@ -1,3 +1,3 @@
-"""EcoWitt API wrapper."""
+"""aioEcoWitt API wrapper."""
 from .server import EcoWittListener
 from .sensor import EcoWittSensor, EcoWittSensorTypes

@@ -1,7 +1,4 @@
-"""
-Setup a bone simple webserver, listen to POST's from a device like a
-GW1000 or in my case, HP3501, decode results.
-"""
+"""aioEcoWitt API server."""
 from __future__ import annotations
 
 import logging

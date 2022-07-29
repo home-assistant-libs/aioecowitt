@@ -1,4 +1,4 @@
-# ecowitt
+# aioEcoWitt
 
 Simple python library for the EcoWitt Protocol
 

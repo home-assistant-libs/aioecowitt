@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 import sys
 
-from ecowitt import EcoWittListener, EcoWittSensor
+from aioecowitt import EcoWittListener, EcoWittSensor
 
 
 def usage():

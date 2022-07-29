@@ -1,6 +1,6 @@
 """Test ecowitt sensor module."""
 
-from ecowitt import sensor
+from aioecowitt import sensor
 
 
 def test_update_listener() -> None:

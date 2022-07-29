@@ -1,9 +1,8 @@
 """EcoWitt server tests."""
 
-from aiohttp import web
 import pytest
 
-from ecowitt import server
+from aioecowitt import server
 
 from .const import GW2000A_DATA
 

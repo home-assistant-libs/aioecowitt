@@ -1,6 +1,6 @@
 """Test for calulcated values from calc.py"""
 
-from ecowitt import calc
+from aioecowitt import calc
 
 from .const import EASYWEATHER_DATA, GW2000A_DATA
 
