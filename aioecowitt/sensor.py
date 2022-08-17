@@ -345,7 +345,6 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "tf_batt8": EcoWittMapping(
         "Soil Temperature 8 Battery", EcoWittSensorTypes.VOLTAGE
     ),
-    "mac": EcoWittMapping("macaddr", EcoWittSensorTypes.INTERNAL),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
     "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.VOLTAGE),
