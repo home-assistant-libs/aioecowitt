@@ -17,7 +17,7 @@ class EcoWittSensor:
     stype: EcoWittSensorTypes
     station: EcoWittStation
     value: None | str | int | float = field(default=None, init=False)
-    last_upddate: float = field(default=0, init=False)
+    last_update: float = field(default=0, init=False)
     last_update_m: float = field(default=0, init=False)
     update_cb: list[Callable[[None], None]] = field(default_factory=list, init=False)
 
@@ -25,7 +25,7 @@ class EcoWittSensor:
         self, value: None | str | int | float, last_update: float, last_update_m: float
     ) -> None:
         """Update the value of the sensor."""
-        self.last_upddate = last_update
+        self.last_update = last_update
         self.last_update_m = last_update_m
 
         # Set the value
@@ -41,33 +41,34 @@ class EcoWittSensor:
 class EcoWittSensorTypes(enum.Enum):
     """EcoWitt sensor types."""
 
-    PRESSURE_HPA = 1
-    PRESSURE_INHG = 2
-    RATE_MM = 3
-    RATE_INCHES = 4
-    HUMIDITY = 5
-    DEGREE = 6
-    SPEED_KPH = 7
-    SPEED_MPH = 8
-    SPEED_MPS = 9
+    INTERNAL = 1
+    PRESSURE_HPA = 2
+    PRESSURE_INHG = 3
+    RATE_MM = 4
+    RATE_INCHES = 5
+    HUMIDITY = 6
+    DEGREE = 7
+    SPEED_KPH = 8
+    SPEED_MPH = 9
     TEMPERATURE_C = 10
     TEMPERATURE_F = 11
     WATT_METERS_SQUARED = 12
     UV_INDEX = 13
     PM25 = 14
-    TIMESTAMP = 15
-    COUNT = 16
-    DISTANCE_KM = 17
-    DISTANCE_MILES = 18
-    BINARY = 19
-    PM10 = 20
+    PM10 = 15
+    TIMESTAMP = 16
+    LIGHTNING_COUNT = 17
+    DISTANCE_KM = 18
+    DISTANCE_MILES = 19
+    LEAK = 20
     VOLTAGE = 21
-    BATTERY_PERCENTAGE = 22
-    LENGTH_INCHES = 23
-    LENGTH_MM = 24
-    CO2_PPM = 25
-    INTERNAL = 26
-    LUX = 27
+    BATTERY_BINARY = 22
+    BATTERY_VOLTAGE = 23
+    BATTERY_PERCENTAGE = 24
+    LENGTH_INCHES = 25
+    LENGTH_MM = 26
+    CO2_PPM = 27
+    LUX = 28
 
 
 @dataclass
@@ -200,7 +201,9 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "lightning_time": EcoWittMapping(
         "Last Lightning strike", EcoWittSensorTypes.TIMESTAMP
     ),
-    "lightning_num": EcoWittMapping("Lightning strikes", EcoWittSensorTypes.COUNT),
+    "lightning_num": EcoWittMapping(
+        "Lightning strikes", EcoWittSensorTypes.LIGHTNING_COUNT
+    ),
     "lightning": EcoWittMapping(
         "Lightning strike distance", EcoWittSensorTypes.DISTANCE_KM
     ),
@@ -222,33 +225,33 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "co2": EcoWittMapping("WH45 CO2", EcoWittSensorTypes.CO2_PPM),
     "co2_24h": EcoWittMapping("WH45 CO2 24h average", EcoWittSensorTypes.CO2_PPM),
     "co2_batt": EcoWittMapping("WH45 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE),
-    "leak_ch1": EcoWittMapping("Leak Detection 1", EcoWittSensorTypes.BINARY),
-    "leak_ch2": EcoWittMapping("Leak Detection 2", EcoWittSensorTypes.BINARY),
-    "leak_ch3": EcoWittMapping("Leak Detection 3", EcoWittSensorTypes.BINARY),
-    "leak_ch4": EcoWittMapping("Leak Detection 4", EcoWittSensorTypes.BINARY),
-    "wh25batt": EcoWittMapping("WH25 Battery", EcoWittSensorTypes.BINARY),
-    "wh26batt": EcoWittMapping("WH26 Battery", EcoWittSensorTypes.BINARY),
-    "wh40batt": EcoWittMapping("WH40 Battery", EcoWittSensorTypes.VOLTAGE),
+    "leak_ch1": EcoWittMapping("Leak Detection 1", EcoWittSensorTypes.LEAK),
+    "leak_ch2": EcoWittMapping("Leak Detection 2", EcoWittSensorTypes.LEAK),
+    "leak_ch3": EcoWittMapping("Leak Detection 3", EcoWittSensorTypes.LEAK),
+    "leak_ch4": EcoWittMapping("Leak Detection 4", EcoWittSensorTypes.LEAK),
+    "wh25batt": EcoWittMapping("WH25 Battery", EcoWittSensorTypes.BATTERY_BINARY),
+    "wh26batt": EcoWittMapping("WH26 Battery", EcoWittSensorTypes.BATTERY_BINARY),
+    "wh40batt": EcoWittMapping("WH40 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh57batt": EcoWittMapping("WH57 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE),
-    "wh65batt": EcoWittMapping("WH65 Battery", EcoWittSensorTypes.BINARY),
-    "wh68batt": EcoWittMapping("WH68 Battery", EcoWittSensorTypes.VOLTAGE),
-    "wh80batt": EcoWittMapping("WH80 Battery", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt4": EcoWittMapping("Soil Battery 4", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt5": EcoWittMapping("Soil Battery 5", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt6": EcoWittMapping("Soil Battery 6", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt7": EcoWittMapping("Soil Battery 7", EcoWittSensorTypes.VOLTAGE),
-    "soilbatt8": EcoWittMapping("Soil Battery 8", EcoWittSensorTypes.VOLTAGE),
-    "batt1": EcoWittMapping("Battery 1", EcoWittSensorTypes.BINARY),
-    "batt2": EcoWittMapping("Battery 2", EcoWittSensorTypes.BINARY),
-    "batt3": EcoWittMapping("Battery 3", EcoWittSensorTypes.BINARY),
-    "batt4": EcoWittMapping("Battery 4", EcoWittSensorTypes.BINARY),
-    "batt5": EcoWittMapping("Battery 5", EcoWittSensorTypes.BINARY),
-    "batt6": EcoWittMapping("Battery 6", EcoWittSensorTypes.BINARY),
-    "batt7": EcoWittMapping("Battery 7", EcoWittSensorTypes.BINARY),
-    "batt8": EcoWittMapping("Battery 8", EcoWittSensorTypes.BINARY),
+    "wh65batt": EcoWittMapping("WH65 Battery", EcoWittSensorTypes.BATTERY_BINARY),
+    "wh68batt": EcoWittMapping("WH68 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "wh80batt": EcoWittMapping("WH80 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt4": EcoWittMapping("Soil Battery 4", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt5": EcoWittMapping("Soil Battery 5", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt6": EcoWittMapping("Soil Battery 6", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt7": EcoWittMapping("Soil Battery 7", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soilbatt8": EcoWittMapping("Soil Battery 8", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "batt1": EcoWittMapping("Battery 1", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt2": EcoWittMapping("Battery 2", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt3": EcoWittMapping("Battery 3", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt4": EcoWittMapping("Battery 4", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt5": EcoWittMapping("Battery 5", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt6": EcoWittMapping("Battery 6", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt7": EcoWittMapping("Battery 7", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt8": EcoWittMapping("Battery 8", EcoWittSensorTypes.BATTERY_BINARY),
     "pm25batt1": EcoWittMapping(
         "PM2.5 1 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE
     ),
@@ -322,32 +325,32 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "tf_ch7": EcoWittMapping("Soil Temperature 7", EcoWittSensorTypes.TEMPERATURE_F),
     "tf_ch8": EcoWittMapping("Soil Temperature 8", EcoWittSensorTypes.TEMPERATURE_F),
     "tf_batt1": EcoWittMapping(
-        "Soil Temperature 1 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 1 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt2": EcoWittMapping(
-        "Soil Temperature 2 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 2 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt3": EcoWittMapping(
-        "Soil Temperature 3 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 3 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt4": EcoWittMapping(
-        "Soil Temperature 4 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 4 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt5": EcoWittMapping(
-        "Soil Temperature 5 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 5 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt6": EcoWittMapping(
-        "Soil Temperature 6 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 6 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt7": EcoWittMapping(
-        "Soil Temperature 7 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 7 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "tf_batt8": EcoWittMapping(
-        "Soil Temperature 8 Battery", EcoWittSensorTypes.VOLTAGE
+        "Soil Temperature 8 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
-    "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.VOLTAGE),
+    "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh90battpc": EcoWittMapping(
         "WH90 Battery Percentage",
         EcoWittSensorTypes.BATTERY_PERCENTAGE,
