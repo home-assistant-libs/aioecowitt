@@ -44,8 +44,8 @@ class EcoWittSensorTypes(enum.Enum):
     INTERNAL = 1
     PRESSURE_HPA = 2
     PRESSURE_INHG = 3
-    RATE_MM = 4
-    RATE_INCHES = 5
+    RAIN_RATE_MM = 4
+    RAIN_RATE_INCHES = 5
     HUMIDITY = 6
     DEGREE = 7
     SPEED_KPH = 8
@@ -58,17 +58,15 @@ class EcoWittSensorTypes(enum.Enum):
     PM10 = 15
     TIMESTAMP = 16
     LIGHTNING_COUNT = 17
-    DISTANCE_KM = 18
-    DISTANCE_MILES = 19
+    LIGHTNING_DISTANCE_KM = 18
+    LIGHTNING_DISTANCE_MILES = 19
     LEAK = 20
     VOLTAGE = 21
     BATTERY_BINARY = 22
     BATTERY_VOLTAGE = 23
     BATTERY_PERCENTAGE = 24
-    LENGTH_INCHES = 25
-    LENGTH_MM = 26
-    CO2_PPM = 27
-    LUX = 28
+    CO2_PPM = 25
+    LUX = 26
 
 
 @dataclass
@@ -84,24 +82,36 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "baromrelhpa": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_HPA),
     "baromabsin": EcoWittMapping("Absolute Pressure", EcoWittSensorTypes.PRESSURE_INHG),
     "baromrelin": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_INHG),
-    "rainratein": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RATE_INCHES),
-    "eventrainin": EcoWittMapping("Event Rain Rate", EcoWittSensorTypes.RATE_INCHES),
-    "hourlyrainin": EcoWittMapping("Hourly Rain Rate", EcoWittSensorTypes.RATE_INCHES),
-    "totalrainin": EcoWittMapping("Total Rain", EcoWittSensorTypes.RATE_INCHES),
-    "dailyrainin": EcoWittMapping("Daily Rain Rate", EcoWittSensorTypes.RATE_INCHES),
-    "weeklyrainin": EcoWittMapping("Weekly Rain Rate", EcoWittSensorTypes.RATE_INCHES),
-    "monthlyrainin": EcoWittMapping(
-        "Monthly Rain Rate", EcoWittSensorTypes.RATE_INCHES
+    "rainratein": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES),
+    "eventrainin": EcoWittMapping(
+        "Event Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
-    "yearlyrainin": EcoWittMapping("Yearly Rain Rate", EcoWittSensorTypes.RATE_INCHES),
-    "rainratemm": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RATE_MM),
-    "eventrainmm": EcoWittMapping("Event Rain Rate", EcoWittSensorTypes.RATE_MM),
-    "hourlyrainmm": EcoWittMapping("Hourly Rain Rate", EcoWittSensorTypes.RATE_MM),
-    "totalrainmm": EcoWittMapping("Total Rain", EcoWittSensorTypes.RATE_MM),
-    "dailyrainmm": EcoWittMapping("Daily Rain Rate", EcoWittSensorTypes.RATE_MM),
-    "weeklyrainmm": EcoWittMapping("Weekly Rain Rate", EcoWittSensorTypes.RATE_MM),
-    "monthlyrainmm": EcoWittMapping("Monthly Rain Rate", EcoWittSensorTypes.RATE_MM),
-    "yearlyrainmm": EcoWittMapping("Yearly Rain Rate", EcoWittSensorTypes.RATE_MM),
+    "hourlyrainin": EcoWittMapping(
+        "Hourly Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES
+    ),
+    "totalrainin": EcoWittMapping("Total Rain", EcoWittSensorTypes.RAIN_RATE_INCHES),
+    "dailyrainin": EcoWittMapping(
+        "Daily Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES
+    ),
+    "weeklyrainin": EcoWittMapping(
+        "Weekly Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES
+    ),
+    "monthlyrainin": EcoWittMapping(
+        "Monthly Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES
+    ),
+    "yearlyrainin": EcoWittMapping(
+        "Yearly Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES
+    ),
+    "rainratemm": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
+    "eventrainmm": EcoWittMapping("Event Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
+    "hourlyrainmm": EcoWittMapping("Hourly Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
+    "totalrainmm": EcoWittMapping("Total Rain", EcoWittSensorTypes.RAIN_RATE_MM),
+    "dailyrainmm": EcoWittMapping("Daily Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
+    "weeklyrainmm": EcoWittMapping("Weekly Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
+    "monthlyrainmm": EcoWittMapping(
+        "Monthly Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM
+    ),
+    "yearlyrainmm": EcoWittMapping("Yearly Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
     "humidity": EcoWittMapping("Humidity", EcoWittSensorTypes.HUMIDITY),
     "humidityin": EcoWittMapping("Indoor Humidity", EcoWittSensorTypes.HUMIDITY),
     "humidity1": EcoWittMapping("Humidity 1", EcoWittSensorTypes.HUMIDITY),
@@ -205,11 +215,11 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
         "Lightning strikes", EcoWittSensorTypes.LIGHTNING_COUNT
     ),
     "lightning": EcoWittMapping(
-        "Lightning strike distance", EcoWittSensorTypes.DISTANCE_KM
+        "Lightning strike distance", EcoWittSensorTypes.LIGHTNING_DISTANCE_KM
     ),
     "lightning_mi": EcoWittMapping(
         "Lightning strike distance",
-        EcoWittSensorTypes.DISTANCE_MILES,
+        EcoWittSensorTypes.LIGHTNING_DISTANCE_MILES,
     ),
     "tf_co2": EcoWittMapping("WH45 Temperature", EcoWittSensorTypes.TEMPERATURE_F),
     "tf_co2c": EcoWittMapping("WH45 Temperature", EcoWittSensorTypes.TEMPERATURE_C),
@@ -356,43 +366,45 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
         EcoWittSensorTypes.BATTERY_PERCENTAGE,
     ),
     "ws90cap_volt": EcoWittMapping("WH90 Capacitor", EcoWittSensorTypes.VOLTAGE),
-    "rrain_piezo": EcoWittMapping("Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES),
+    "rrain_piezo": EcoWittMapping(
+        "Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
+    ),
     "erain_piezo": EcoWittMapping(
-        "Event Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES
+        "Event Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
     "hrain_piezo": EcoWittMapping(
-        "Hourly Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES
+        "Hourly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
     "drain_piezo": EcoWittMapping(
-        "Daily Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES
+        "Daily Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
     "wrain_piezo": EcoWittMapping(
-        "Weekly Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES
+        "Weekly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
     "mrain_piezo": EcoWittMapping(
-        "Monthly Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES
+        "Monthly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
     "yrain_piezo": EcoWittMapping(
-        "Yearly Rain Rate Piezo", EcoWittSensorTypes.RATE_INCHES
+        "Yearly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
     ),
-    "rrain_piezomm": EcoWittMapping("Rain Rate Piezo", EcoWittSensorTypes.RATE_MM),
+    "rrain_piezomm": EcoWittMapping("Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM),
     "erain_piezomm": EcoWittMapping(
-        "Event Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
+        "Event Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM
     ),
     "hrain_piezomm": EcoWittMapping(
-        "Hourly Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
+        "Hourly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM
     ),
     "drain_piezomm": EcoWittMapping(
-        "Daily Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
+        "Daily Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM
     ),
     "wrain_piezomm": EcoWittMapping(
-        "Weekly Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
+        "Weekly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM
     ),
     "mrain_piezomm": EcoWittMapping(
-        "Monthly Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
+        "Monthly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM
     ),
     "yrain_piezomm": EcoWittMapping(
-        "Yearly Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
+        "Yearly Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM
     ),
     "runtime": EcoWittMapping("Runtime", EcoWittSensorTypes.INTERNAL),
 }
