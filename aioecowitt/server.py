@@ -55,6 +55,8 @@ class EcoWittListener:
         if station.key not in self.stations:
             _LOGGER.debug("Found new station: %s", station.key)
             self.stations[station.key] = station
+        else:
+            station = self.stations[station.key]
 
         last_update = time.time()
         last_update_m = time.monotonic()
