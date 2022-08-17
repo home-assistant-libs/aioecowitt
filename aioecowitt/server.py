@@ -7,8 +7,9 @@ from typing import Callable
 
 from aiohttp import web
 
-from .sensor import EcoWittSensor, SENSOR_MAP, EcoWittSensorTypes
-from . import calc
+from .sensor import EcoWittSensor, SENSOR_MAP
+from .station import extract_station, EcoWittStation
+from .calc import weather_datapoints
 
 _LOGGER = logging.getLogger(__name__)
 _ECOWITT_LISTEN_PORT = 49199
@@ -29,17 +30,12 @@ class EcoWittListener:
         self.site: None | web.TCPSite = None
 
         # internal data
-        self.last_values: dict[str, str | int | float | None] = {}
-        self.lastupd: float = 0
+        self.last_values: dict[str, dict[str, str | int | float | None]] = {}
         self.new_sensor_cb: list[Callable[[EcoWittSensor], None]] = []
 
         # storage
-        self._station_type: str = "Unknown"
-        self._station_freq: str = "Unknown"
-        self._station_model: str = "Unknown"
-        self._mac_addr: None | str = None
-
         self.sensors: dict[str, EcoWittSensor] = {}
+        self.stations: dict[str, EcoWittStation] = {}
 
     def _new_sensor_cb(self, sensor: EcoWittSensor) -> None:
         """Internal new sensor callback
@@ -49,14 +45,23 @@ class EcoWittListener:
         for callback in self.new_sensor_cb:
             callback(sensor)
 
-    def process_data(self, weather_data: dict[str, str | float | int | None]) -> None:
+    def process_data(self, data: dict[str, str | float | int | None]) -> None:
         """Process data from weather station."""
-        station = weather_data["PASSKEY"]
+        data = data.copy()
+        station = extract_station(data)
+        weather_data = weather_datapoints(data)
+
+        # add station to list
+        if station.key not in self.stations:
+            _LOGGER.debug("Found new station: %s", station.key)
+            self.stations[station.key] = station
+
         last_update = time.time()
         last_update_m = time.monotonic()
 
         for datapoint in weather_data.keys():
-            sensor = self.sensors.get(datapoint)
+            sensor_id = f"{station.key}.{datapoint}"
+            sensor = self.sensors.get(sensor_id)
             if sensor is None:
                 # we have a new sensor
                 if datapoint not in SENSOR_MAP:
@@ -71,7 +76,7 @@ class EcoWittListener:
                 sensor = EcoWittSensor(
                     metadata.name, datapoint, metadata.stype, station
                 )
-                self.sensors[datapoint] = sensor
+                self.sensors[sensor_id] = sensor
                 try:
                     self._new_sensor_cb(sensor)
                 except Exception as err:  # pylint: disable=broad-except
@@ -91,10 +96,8 @@ class EcoWittListener:
         data = await request.post()
 
         # data is not a dict, it's a MultiDict
-        weather_data = calc.weather_datapoints({**data})
-        self.last_values = weather_data.copy()
-        self.lastupd = time.time()
-        self.process_data(weather_data)
+        self.last_values[data["PASSKEY"]] = data
+        self.process_data(data)
 
         return web.Response(text="OK")
 
@@ -110,22 +113,3 @@ class EcoWittListener:
     async def stop(self) -> None:
         """Stop listening."""
         await self.site.stop()
-
-    def list_sensor_keys(self) -> list[str]:
-        """List all available sensors by key."""
-        return [sensor.key for sensor in self.sensors]
-
-    def list_sensor_keys_by_type(self, stype: EcoWittSensorTypes) -> list[str]:
-        """List all available sensors of a given type."""
-        sensor_list = []
-        for sensor in self.sensors:
-            if sensor.stype == stype:
-                sensor_list.append(sensor.key)
-        return sensor_list
-
-    def get_sensor_value_by_key(self, key: str) -> None | str | int | float:
-        """Find the sensor named key and return its value."""
-        sensor = self.sensors.get(key)
-        if sensor is None:
-            return None
-        return sensor.value
