@@ -5,6 +5,8 @@ from typing import Callable
 from dataclasses import dataclass, field
 import enum
 
+from .station import EcoWittStation
+
 
 @dataclass
 class EcoWittSensor:
@@ -13,7 +15,7 @@ class EcoWittSensor:
     name: str
     key: str
     stype: EcoWittSensorTypes
-    station: str
+    station: EcoWittStation
     value: None | str | int | float = field(default=None, init=False)
     last_upddate: float = field(default=0, init=False)
     last_update_m: float = field(default=0, init=False)
@@ -343,13 +345,8 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "tf_batt8": EcoWittMapping(
         "Soil Temperature 8 Battery", EcoWittSensorTypes.VOLTAGE
     ),
-    "mac": EcoWittMapping("macaddr", EcoWittSensorTypes.INTERNAL),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
-    "PASSKEY": EcoWittMapping("passkey", EcoWittSensorTypes.INTERNAL),
-    "stationtype": EcoWittMapping("stationtype", EcoWittSensorTypes.INTERNAL),
-    "freq": EcoWittMapping("freq", EcoWittSensorTypes.INTERNAL),
-    "model": EcoWittMapping("model", EcoWittSensorTypes.INTERNAL),
     "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.VOLTAGE),
     "wh90battpc": EcoWittMapping(
         "WH90 Battery Percentage",
@@ -395,5 +392,4 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
         "Yearly Rain Rate Piezo", EcoWittSensorTypes.RATE_MM
     ),
     "runtime": EcoWittMapping("Runtime", EcoWittSensorTypes.INTERNAL),
-    "ws90_ver": EcoWittMapping("WS90 Version", EcoWittSensorTypes.INTERNAL),
 }
