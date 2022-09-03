@@ -18,7 +18,7 @@ setup(
     description="Python wrapper for EcoWitt Protocol",
     long_description=README_FILE.read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude=["test.*", "test", "misc"]),
+    packages=find_packages(exclude=["tests.*", "tests", "misc"]),
     package_data={"aioecowitt": ["py.typed"]},
     python_requires=">=3.9",
     install_requires=["aiohttp>3", "meteocalc>=1.1.0"],
