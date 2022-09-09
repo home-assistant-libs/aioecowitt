@@ -5,19 +5,12 @@ import datetime as dt
 
 import meteocalc
 
+from .sensor import SENSOR_MAP, EcoWittSensorTypes
+
 
 def _ftoc(fahrenheit: float | str) -> float:
     """Convert f to c."""
     return round(meteocalc.Temp(fahrenheit, "F").c, 1)
-
-
-def _volt_to_percent(volt: float, low: float, high: float) -> float | int:
-    percent = round(((volt - low) / (high - low)) * 100)
-    if percent < 0:
-        percent = 0
-    elif percent > 100:
-        percent = 100
-    return percent
 
 
 def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
@@ -241,6 +234,15 @@ def weather_datapoints(
         "wh90",
         "co2_",
     ]
+    for prefix in bat_names:
+        name = f"{prefix}batt"
+        if name in data:
+            batt_type = SENSOR_MAP[name].stype
+            if batt_type == EcoWittSensorTypes.BATTERY_PERCENTAGE:
+                data[name] = int(data[name]) * 20
+            else:
+                data[name] = float(data[name])
+
     bat_range_names = [
         "soil",
         "",  # for just 'batt'
@@ -248,21 +250,18 @@ def weather_datapoints(
         "leak",
         "tf_",  # WN34 voltage type
     ]
-
-    for prefix in bat_names:
-        name = f"{prefix}batt"
-        if name in data:
-            data[name] = float(data[name])
-
     for r_prefix in bat_range_names:
         for j in range(1, 9):
             name = f"{r_prefix}batt{j}"
             if name in data:
-                data[name] = float(data[name])
+                batt_type = SENSOR_MAP[name].stype
+                if batt_type == EcoWittSensorTypes.BATTERY_PERCENTAGE:
+                    data[name] = int(data[name]) * 20
+                else:
+                    data[name] = float(data[name])
 
     # percentage battery for device view
     if "wh90batt" in data:
-        data["wh90battpc"] = _volt_to_percent(data["wh90batt"], 2.4, 3.0)
         data["ws90cap_volt"] = float(data["ws90cap_volt"])
 
     return data
