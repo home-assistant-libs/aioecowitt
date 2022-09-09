@@ -30,7 +30,7 @@ class EcoWittListener:
         self.site: None | web.TCPSite = None
 
         # internal data
-        self.last_values: dict[str, dict[str, str | int | float | None]] = {}
+        self.last_values: dict[str, dict[str, str | None]] = {}
         self.new_sensor_cb: list[Callable[[EcoWittSensor], None]] = []
 
         # storage
