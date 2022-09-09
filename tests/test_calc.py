@@ -48,7 +48,6 @@ def test_gw2000a_v2():
         "tempinf": 78.8,
         "uv": 4,
         "wh90batt": 2.74,
-        "wh90battpc": 57,
         "windchillc": None,
         "windchillf": None,
         "winddir": 289,
