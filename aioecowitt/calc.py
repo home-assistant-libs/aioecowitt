@@ -260,8 +260,9 @@ def weather_datapoints(
                 else:
                     data[name] = float(data[name])
 
-    # percentage battery for device view
-    if "wh90batt" in data:
-        data["ws90cap_volt"] = float(data["ws90cap_volt"])
+    bat_full_names = ["ws90cap_volt"]
+    for name in bat_full_names:
+        if name in data:
+            data[name] = float(data[name])
 
     return data
