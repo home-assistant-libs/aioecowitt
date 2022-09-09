@@ -21,9 +21,7 @@ def _volt_to_percent(volt: float, low: float, high: float) -> float | int:
 
 
 def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
-    return dt.datetime.utcfromtimestamp(timestamp).replace(
-        tzinfo=dt.timezone.utc
-    )
+    return dt.datetime.utcfromtimestamp(timestamp).replace(tzinfo=dt.timezone.utc)
 
 
 def weather_datapoints(
@@ -63,7 +61,6 @@ def weather_datapoints(
         if data["lightning"] is not None and data["lightning"] != "":
             data["lightning"] = int(data["lightning"])
             data["lightning_mi"] = int(round(data["lightning"] * km_mi))
-    if "lightning_time" in data:
 
     # temperatures
     if "tempf" in data:
