@@ -1,5 +1,7 @@
 """Sensor and mapping data from ecowitt."""
 from __future__ import annotations
+
+import datetime as dt
 from typing import Callable
 
 from dataclasses import dataclass, field
@@ -16,13 +18,16 @@ class EcoWittSensor:
     key: str
     stype: EcoWittSensorTypes
     station: EcoWittStation
-    value: None | str | int | float = field(default=None, init=False)
+    value: None | str | int | float | dt.datetime = field(default=None, init=False)
     last_update: float = field(default=0, init=False)
     last_update_m: float = field(default=0, init=False)
     update_cb: list[Callable[[None], None]] = field(default_factory=list, init=False)
 
     def update_value(
-        self, value: None | str | int | float, last_update: float, last_update_m: float
+        self,
+        value: None | str | int | float | dt.datetime,
+        last_update: float,
+        last_update_m: float,
     ) -> None:
         """Update the value of the sensor."""
         self.last_update = last_update

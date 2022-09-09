@@ -1,6 +1,7 @@
 """aioEcoWitt API server."""
 from __future__ import annotations
 
+import datetime as dt
 import logging
 import time
 from typing import Callable
@@ -30,7 +31,9 @@ class EcoWittListener:
         self.site: None | web.TCPSite = None
 
         # internal data
-        self.last_values: dict[str, dict[str, str | int | float | None]] = {}
+        self.last_values: dict[
+            str, dict[str, str | int | float | dt.datetime | None]
+        ] = {}
         self.new_sensor_cb: list[Callable[[EcoWittSensor], None]] = []
 
         # storage

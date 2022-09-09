@@ -1,7 +1,7 @@
 """Weather datapoint calculator."""
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 
 import meteocalc
 
@@ -20,15 +20,15 @@ def _volt_to_percent(volt: float, low: float, high: float) -> float | int:
     return percent
 
 
-def _timestamp_to_datetime(timestamp: int) -> datetime.datetime:
-    return datetime.datetime.utcfromtimestamp(timestamp).replace(
-        tzinfo=datetime.timezone.utc
+def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
+    return dt.datetime.utcfromtimestamp(timestamp).replace(
+        tzinfo=dt.timezone.utc
     )
 
 
 def weather_datapoints(
     data: dict[str, str]
-) -> dict[str, str | int | float | datetime.datetime | None]:
+) -> dict[str, str | int | float | dt.datetime | None]:
     """Calculate and convert weather data."""
     mph_kmh = 1.60934
     in_hpa = 33.86
@@ -54,7 +54,9 @@ def weather_datapoints(
     # lightning
     if "lightning_time" in data:
         if data["lightning_time"] is not None and data["lightning_time"] != "":
-            data["lightning_time"] = int(data["lightning_time"])
+            data["lightning_time"] = _timestamp_to_datetime(int(data["lightning_time"]))
+        else:
+            data["lightning_time"] = None
     if "lightning_num" in data:
         data["lightning_num"] = int(data["lightning_num"])
     if "lightning" in data:
@@ -62,7 +64,6 @@ def weather_datapoints(
             data["lightning"] = int(data["lightning"])
             data["lightning_mi"] = int(round(data["lightning"] * km_mi))
     if "lightning_time" in data:
-        data["lightning_time"] = _timestamp_to_datetime(data["lightning_time"])
 
     # temperatures
     if "tempf" in data:
