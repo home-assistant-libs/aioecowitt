@@ -74,6 +74,7 @@ class EcoWittSensorTypes(enum.Enum):
     BATTERY_PERCENTAGE = 26
     CO2_PPM = 27
     LUX = 28
+    PERCENTAGE = 29
 
 
 @dataclass
@@ -370,6 +371,38 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "tf_batt8": EcoWittMapping(
         "Soil Temperature 8 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leafwetness_ch1": EcoWittMapping("Leaf Wetness 1", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch2": EcoWittMapping("Leaf Wetness 2", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch3": EcoWittMapping("Leaf Wetness 3", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch4": EcoWittMapping("Leaf Wetness 4", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch5": EcoWittMapping("Leaf Wetness 5", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch6": EcoWittMapping("Leaf Wetness 6", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch7": EcoWittMapping("Leaf Wetness 7", EcoWittSensorTypes.PERCENTAGE),
+    "leafwetness_ch8": EcoWittMapping("Leaf Wetness 8", EcoWittSensorTypes.PERCENTAGE),
+    "leaf_batt1": EcoWittMapping(
+        "Leaf Wetness 1 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt2": EcoWittMapping(
+        "Leaf Wetness 2 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt3": EcoWittMapping(
+        "Leaf Wetness 3 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt4": EcoWittMapping(
+        "Leaf Wetness 4 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt5": EcoWittMapping(
+        "Leaf Wetness 5 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt6": EcoWittMapping(
+        "Leaf Wetness 6 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt7": EcoWittMapping(
+        "Leaf Wetness 7 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "leaf_batt8": EcoWittMapping(
+        "Leaf Wetness 8 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
