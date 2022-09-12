@@ -41,8 +41,8 @@ async def test_server_start(ecowitt_server, ecowitt_http) -> None:
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 46
-    assert len(ecowitt_server.sensors) == 46
+    assert len(sensors) == 50
+    assert len(ecowitt_server.sensors) == 50
     assert len(ecowitt_server.stations) == 1
 
 
@@ -67,8 +67,8 @@ async def test_server_token(ecowitt_server, ecowitt_http) -> None:
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 46
-    assert len(ecowitt_server.sensors) == 46
+    assert len(sensors) == 50
+    assert len(ecowitt_server.sensors) == 50
     assert len(ecowitt_server.stations) == 1
 
 
@@ -93,6 +93,6 @@ async def test_server_multi_stations(ecowitt_server, ecowitt_http) -> None:
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 85
-    assert len(ecowitt_server.sensors) == 85
+    assert len(sensors) == 89
+    assert len(ecowitt_server.sensors) == 89
     assert len(ecowitt_server.stations) == 2
