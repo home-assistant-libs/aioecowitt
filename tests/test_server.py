@@ -45,6 +45,8 @@ async def test_server_start(ecowitt_server, ecowitt_http) -> None:
     assert len(ecowitt_server.sensors) == 50
     assert len(ecowitt_server.stations) == 1
 
+    assert "PASSKEY" not in ecowitt_server.last_values[GW2000A_DATA["PASSKEY"]]
+
 
 @pytest.mark.asyncio
 async def test_server_token(ecowitt_server, ecowitt_http) -> None:

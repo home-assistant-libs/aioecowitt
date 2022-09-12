@@ -98,7 +98,8 @@ class EcoWittListener:
         data = await request.post()
 
         # data is not a dict, it's a MultiDict
-        self.last_values[data["PASSKEY"]] = data
+        self.last_values[data["PASSKEY"]] = data.copy()
+        self.last_values[data["PASSKEY"]].pop("PASSKEY")
         self.process_data(data)
 
         return web.Response(text="OK")
