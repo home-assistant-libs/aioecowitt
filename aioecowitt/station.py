@@ -15,7 +15,7 @@ class EcoWittStation:
 
     station: str
     model: str
-    frequence: str
+    frequence: str | None
     key: str
     version: None | str = field(default=None)
 
@@ -25,7 +25,7 @@ def extract_station(data: dict[str, str]) -> EcoWittStation:
     station = data.pop("stationtype")
     passkey = data.pop("PASSKEY")
     model = data.pop("model")
-    frequence = data.pop("freq")
+    frequence = data.pop("freq", None)
 
     version = None
     for value in VERSION_FIELDS:
