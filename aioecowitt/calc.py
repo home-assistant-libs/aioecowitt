@@ -178,7 +178,7 @@ def weather_datapoints(
     # Feels like
     if "tempf" in data and "humidity" in data and "windspeedmph" in data:
         feels_like = meteocalc.feels_like(
-            data["tempf"], data["windspeedmph"], data["humidity"]
+            data["tempf"], data["humidity"], data["windspeedmph"]
         )
         data["tempfeelsf"] = round(feels_like.f, 1)
         data["tempfeelsc"] = round(feels_like.c, 1)
