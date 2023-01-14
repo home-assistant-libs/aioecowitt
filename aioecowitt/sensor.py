@@ -449,4 +449,5 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
         "Yearly Rain Rate Piezo", EcoWittSensorTypes.RAIN_COUNT_MM
     ),
     "runtime": EcoWittMapping("Runtime", EcoWittSensorTypes.INTERNAL),
+    "interval": EcoWittMapping("Interval", EcoWittSensorTypes.INTERNAL),
 }
