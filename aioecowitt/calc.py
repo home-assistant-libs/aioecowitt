@@ -54,7 +54,7 @@ def weather_datapoints(
         if data["lightning"]:
             data["lightning"] = int(data["lightning"])
             data["lightning_mi"] = int(round(data["lightning"] * km_mi))
-         else:
+        else:
             data["lightning"] = None
 
     # temperatures
