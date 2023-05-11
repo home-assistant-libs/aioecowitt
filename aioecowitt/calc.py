@@ -44,16 +44,18 @@ def weather_datapoints(
 
     # lightning
     if "lightning_time" in data:
-        if data["lightning_time"] is not None and data["lightning_time"] != "":
+        if data["lightning_time"]:
             data["lightning_time"] = _timestamp_to_datetime(int(data["lightning_time"]))
         else:
             data["lightning_time"] = None
     if "lightning_num" in data:
         data["lightning_num"] = int(data["lightning_num"])
     if "lightning" in data:
-        if data["lightning"] is not None and data["lightning"] != "":
+        if data["lightning"]:
             data["lightning"] = int(data["lightning"])
             data["lightning_mi"] = int(round(data["lightning"] * km_mi))
+        else:
+            data["lightning"] = None
 
     # temperatures
     if "tempf" in data:
