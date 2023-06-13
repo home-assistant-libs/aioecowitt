@@ -14,7 +14,7 @@ def _ftoc(fahrenheit: float | str) -> float:
 
 
 def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
-    return dt.datetime.utcfromtimestamp(timestamp).replace(tzinfo=dt.timezone.utc)
+    return dt.datetime.fromtimestamp(timestamp, dt.timezone.utc)
 
 
 def weather_datapoints(
