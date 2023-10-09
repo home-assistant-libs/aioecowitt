@@ -1,6 +1,6 @@
 pytest==7.4.2
 pytest-aiohttp==1.0.5
-pytest-timeout==2.1.0
+pytest-timeout==2.2.0
 black==23.9.1
 flake8==6.1.0
 isort==5.12.0
