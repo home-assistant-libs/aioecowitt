@@ -97,6 +97,8 @@ def test_easyweather():
         "rainratemm": 0.0,
         "solarradiation": 205.52,
         "solarradiation_lux": 26015.2,
+        "soilmoisture1": 1,
+        "soilbatt1": 1.5,
         "stationtype": "EasyWeatherV1.4.9",
         "tempc": 21.3,
         "tempf": 70.3,

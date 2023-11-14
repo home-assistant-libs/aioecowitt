@@ -20,6 +20,8 @@ EASYWEATHER_DATA = {
     "monthlyrainin": "0.079",
     "yearlyrainin": "0.079",
     "solarradiation": "205.52",
+    "soilmoisture1": "1",
+    "soilbatt1": "1.5",
     "uv": "2",
     "freq": "915M",
     "model": "HP3500_V1.6.2",

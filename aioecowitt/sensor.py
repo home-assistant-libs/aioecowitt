@@ -450,4 +450,12 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "runtime": EcoWittMapping("Runtime", EcoWittSensorTypes.INTERNAL),
     "interval": EcoWittMapping("Interval", EcoWittSensorTypes.INTERNAL),
+    "soilad1": EcoWittMapping("Soil Calibration 1", EcoWittSensorTypes.INTERNAL),
+    "soilad2": EcoWittMapping("Soil Calibration 2", EcoWittSensorTypes.INTERNAL),
+    "soilad3": EcoWittMapping("Soil Calibration 3", EcoWittSensorTypes.INTERNAL),
+    "soilad4": EcoWittMapping("Soil Calibration 4", EcoWittSensorTypes.INTERNAL),
+    "soilad5": EcoWittMapping("Soil Calibration 5", EcoWittSensorTypes.INTERNAL),
+    "soilad6": EcoWittMapping("Soil Calibration 6", EcoWittSensorTypes.INTERNAL),
+    "soilad7": EcoWittMapping("Soil Calibration 7", EcoWittSensorTypes.INTERNAL),
+    "soilad8": EcoWittMapping("Soil Calibration 8", EcoWittSensorTypes.INTERNAL),
 }
