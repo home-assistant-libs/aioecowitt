@@ -21,7 +21,7 @@ class EcoWittSensor:
     value: None | str | int | float | dt.datetime = field(default=None, init=False)
     last_update: float = field(default=0, init=False)
     last_update_m: float = field(default=0, init=False)
-    update_cb: list[Callable[[None], None]] = field(default_factory=list, init=False)
+    update_cb: list[Callable[[], None]] = field(default_factory=list, init=False)
 
     def update_value(
         self,
