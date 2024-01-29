@@ -56,6 +56,7 @@ GW2000A_DATA = {
     "ws90cap_volt": "5.4",
     "ws90_ver": "119",
     "wh90batt": "2.74",
+    "console_batt": "2.5",
     "freq": "868M",
     "model": "GW2000A",
 }

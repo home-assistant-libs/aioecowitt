@@ -95,6 +95,6 @@ async def test_server_multi_stations(ecowitt_server, ecowitt_http) -> None:
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 89
-    assert len(ecowitt_server.sensors) == 89
+    assert len(sensors) == 90
+    assert len(ecowitt_server.sensors) == 90
     assert len(ecowitt_server.stations) == 2
