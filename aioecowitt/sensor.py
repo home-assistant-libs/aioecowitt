@@ -75,6 +75,7 @@ class EcoWittSensorTypes(enum.Enum):
     CO2_PPM = 27
     LUX = 28
     PERCENTAGE = 29
+    SOIL_RAWADC = 30
 
 
 @dataclass
@@ -214,6 +215,14 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "soilmoisture6": EcoWittMapping("Soil Moisture 6", EcoWittSensorTypes.HUMIDITY),
     "soilmoisture7": EcoWittMapping("Soil Moisture 7", EcoWittSensorTypes.HUMIDITY),
     "soilmoisture8": EcoWittMapping("Soil Moisture 8", EcoWittSensorTypes.HUMIDITY),
+    "soilad1": EcoWittMapping("Soil AD 1", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad2": EcoWittMapping("Soil AD 2", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad3": EcoWittMapping("Soil AD 3", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad4": EcoWittMapping("Soil AD 4", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad5": EcoWittMapping("Soil AD 5", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad6": EcoWittMapping("Soil AD 6", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad7": EcoWittMapping("Soil AD 7", EcoWittSensorTypes.SOIL_RAWADC),
+    "soilad8": EcoWittMapping("Soil AD 8", EcoWittSensorTypes.SOIL_RAWADC),
     "pm25_ch1": EcoWittMapping("PM2.5 1", EcoWittSensorTypes.PM25),
     "pm25_ch2": EcoWittMapping("PM2.5 2", EcoWittSensorTypes.PM25),
     "pm25_ch3": EcoWittMapping("PM2.5 3", EcoWittSensorTypes.PM25),

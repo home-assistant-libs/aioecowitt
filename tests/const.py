@@ -51,6 +51,7 @@ GW2000A_DATA = {
     "yrain_piezo": "0.000",
     "leak_ch1": "0",
     "leakbatt1": "5",
+    "soilad1": "120",
     "leafwetness_ch1": "14",
     "leaf_batt1": "1.78",
     "ws90cap_volt": "5.4",

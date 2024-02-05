@@ -61,6 +61,7 @@ def test_gw2000a_v2():
         "leafwetness_ch1": 14,
         "leak_ch1": 0,
         "leakbatt1": 100,
+        "soilad1": "120",
         "ws90_ver": "119",
         "ws90cap_volt": 5.4,
         "yrain_piezo": 0.0,
