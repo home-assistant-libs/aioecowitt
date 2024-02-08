@@ -63,6 +63,7 @@ paramset_b = {
     'solarradiation': 0.00,
     'uv': 0,
     'soilmoisture1': 0,
+    'soilad1': 120,
     'wh65batt': 1,
     'wh25batt': 0,
     'console_batt': 2.5,
