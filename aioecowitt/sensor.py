@@ -459,4 +459,5 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "runtime": EcoWittMapping("Runtime", EcoWittSensorTypes.INTERNAL),
     "interval": EcoWittMapping("Interval", EcoWittSensorTypes.INTERNAL),
+    "heap": EcoWittMapping("Memory heap", EcoWittSensorTypes.INTERNAL),
 }

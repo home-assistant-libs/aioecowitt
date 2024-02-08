@@ -1,5 +1,9 @@
 """Test ecowitt sensor module."""
+import pytest
 
+from aioecowitt import server
+
+from .const import GW2000A_V3_DATA
 from aioecowitt import sensor
 
 
@@ -27,3 +31,25 @@ def test_update_listener() -> None:
 
     ecowit_sensor.update_value(11, 0, 0)
     assert called
+
+
+@pytest.mark.asyncio
+async def test_heap_field(ecowitt_server, ecowitt_http) -> None:
+    """Test handling of heap field."""
+    heap_sensor = None
+
+    def on_change(sensor: server.EcoWittSensor) -> None:
+        """Test callback."""
+        if sensor.key == "heap":
+            nonlocal heap_sensor
+            heap_sensor = sensor
+
+    ecowitt_server.new_sensor_cb.append(on_change)
+
+    resp = await ecowitt_http.post("/", data=GW2000A_V3_DATA)
+    assert resp.status == 200
+    text = await resp.text()
+    assert text == "OK"
+
+    assert heap_sensor
+    assert heap_sensor.value == GW2000A_V3_DATA["heap"]
