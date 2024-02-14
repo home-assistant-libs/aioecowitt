@@ -66,6 +66,7 @@ paramset_b = {
     'soilad1': 120,
     'wh65batt': 1,
     'wh25batt': 0,
+    'console_batt': 2.5,
     'soilbatt1': 1.5,
     'leak_ch1': 0,
     'leakbatt1': 5,

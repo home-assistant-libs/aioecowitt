@@ -269,7 +269,10 @@ def weather_datapoints(
                 else:
                     data[name] = float(data[name])
 
-    bat_full_names = ["ws90cap_volt"]
+    bat_full_names = [
+        "ws90cap_volt",
+        "console_batt",
+    ]
     for name in bat_full_names:
         if name in data:
             data[name] = float(data[name])
