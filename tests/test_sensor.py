@@ -1,4 +1,5 @@
 """Test ecowitt sensor module."""
+
 import pytest
 
 from aioecowitt import server

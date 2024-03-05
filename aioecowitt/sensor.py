@@ -1,4 +1,5 @@
 """Sensor and mapping data from ecowitt."""
+
 from __future__ import annotations
 
 import datetime as dt
