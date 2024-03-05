@@ -1,4 +1,5 @@
 """Setup module for EcoWitt."""
+
 from pathlib import Path
 
 from setuptools import find_packages, setup
