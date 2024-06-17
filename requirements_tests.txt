@@ -2,7 +2,7 @@ pytest==8.2.2
 pytest-aiohttp==1.0.5
 pytest-timeout==2.3.1
 black==24.4.2
-flake8==7.0.0
+flake8==7.1.0
 isort==5.13.2
 mypy==1.10.0
 pydocstyle==6.3.0
