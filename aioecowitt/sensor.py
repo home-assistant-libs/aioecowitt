@@ -273,6 +273,8 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "wh65batt": EcoWittMapping("WH65 Battery", EcoWittSensorTypes.BATTERY_BINARY),
     "wh68batt": EcoWittMapping("WH68 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh80batt": EcoWittMapping("WH80 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "wh85batt": EcoWittMapping("WH85 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "console_batt": EcoWittMapping(
         "Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
@@ -422,7 +424,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
-    "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "ws85cap_volt": EcoWittMapping("WH85 Capacitor", EcoWittSensorTypes.VOLTAGE),
     "ws90cap_volt": EcoWittMapping("WH90 Capacitor", EcoWittSensorTypes.VOLTAGE),
     "rrain_piezo": EcoWittMapping(
         "Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
