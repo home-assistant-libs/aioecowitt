@@ -151,6 +151,8 @@ def weather_datapoints(
     if "yrain_piezo" in data:
         data["yrain_piezo"] = float(data["yrain_piezo"])
         data["yrain_piezomm"] = round(data["yrain_piezo"] * in_mm, 1)
+    if "srain_piezo" in data:
+        data["srain_piezo"] = int(data["srain_piezo"])
 
     # Pressure
     if "baromrelin" in data:
