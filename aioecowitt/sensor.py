@@ -259,6 +259,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "co2": EcoWittMapping("WH45 CO2", EcoWittSensorTypes.CO2_PPM),
     "co2_24h": EcoWittMapping("WH45 CO2 24h average", EcoWittSensorTypes.CO2_PPM),
     "co2_batt": EcoWittMapping("WH45 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE),
+    "batt_co2": EcoWittMapping("WH45 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE),
     "leak_ch1": EcoWittMapping("Leak Detection 1", EcoWittSensorTypes.LEAK),
     "leak_ch2": EcoWittMapping("Leak Detection 2", EcoWittSensorTypes.LEAK),
     "leak_ch3": EcoWittMapping("Leak Detection 3", EcoWittSensorTypes.LEAK),
