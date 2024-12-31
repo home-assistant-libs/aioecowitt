@@ -77,6 +77,7 @@ class EcoWittSensorTypes(enum.Enum):
     LUX = 28
     PERCENTAGE = 29
     SOIL_RAWADC = 30
+    RAIN_STATE = 31
 
 
 @dataclass
@@ -442,6 +443,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "yrain_piezo": EcoWittMapping(
         "Yearly Rain Rate Piezo", EcoWittSensorTypes.RAIN_COUNT_INCHES
     ),
+    "srain_piezo": EcoWittMapping("Rain State Piezo", EcoWittSensorTypes.RAIN_STATE),
     "rrain_piezomm": EcoWittMapping("Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM),
     "erain_piezomm": EcoWittMapping(
         "Event Rain Rate Piezo", EcoWittSensorTypes.RAIN_COUNT_MM
