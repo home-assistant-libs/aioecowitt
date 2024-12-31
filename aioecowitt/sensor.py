@@ -77,7 +77,9 @@ class EcoWittSensorTypes(enum.Enum):
     LUX = 28
     PERCENTAGE = 29
     SOIL_RAWADC = 30
-
+    PM1 = 31
+    PM4 = 32    
+    
 
 @dataclass
 class EcoWittMapping:
@@ -248,6 +250,10 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "tf_co2": EcoWittMapping("WH45 Temperature", EcoWittSensorTypes.TEMPERATURE_F),
     "tf_co2c": EcoWittMapping("WH45 Temperature", EcoWittSensorTypes.TEMPERATURE_C),
     "humi_co2": EcoWittMapping("WH45 Humidity", EcoWittSensorTypes.HUMIDITY),
+    "pm1_co2": EcoWittMapping("WH46 PM1 CO2", EcoWittSensorTypes.PM1),
+    "pm1_24h_co2": EcoWittMapping("WH46 PM1 CO2 24h average", EcoWittSensorTypes.PM1),
+    "pm4_co2": EcoWittMapping("WH46 PM4 CO2", EcoWittSensorTypes.PM4),
+    "pm4_24h_co2": EcoWittMapping("WH46 PM4 CO2 24h average", EcoWittSensorTypes.PM4),    
     "pm25_co2": EcoWittMapping("WH45 PM2.5 CO2", EcoWittSensorTypes.PM25),
     "pm25_24h_co2": EcoWittMapping(
         "WH45 PM2.5 CO2 24h average", EcoWittSensorTypes.PM25
