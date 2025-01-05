@@ -33,6 +33,7 @@ class EcoWittListener:
         # internal data
         self.last_values: dict[str, dict[str, str | None]] = {}
         self.new_sensor_cb: list[Callable[[EcoWittSensor], None]] = []
+        self._warned_unknown: set[str] = set()
 
         # storage
         self.sensors: dict[str, EcoWittSensor] = {}
@@ -68,11 +69,13 @@ class EcoWittListener:
             if sensor is None:
                 # we have a new sensor
                 if datapoint not in SENSOR_MAP:
-                    _LOGGER.warning(
-                        "Unhandled sensor type %s value %s",
-                        datapoint,
-                        weather_data[datapoint],
-                    )
+                    if datapoint not in self._warned_unknown:
+                        self._warned_unknown.add(datapoint)
+                        _LOGGER.warning(
+                            "Unhandled sensor type %s value %s",
+                            datapoint,
+                            weather_data[datapoint],
+                        )
                     continue
                 metadata = SENSOR_MAP[datapoint]
 
