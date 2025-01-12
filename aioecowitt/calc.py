@@ -187,7 +187,7 @@ def weather_datapoints(
         data["tempfeelsc"] = round(feels_like.c, 1)
 
     # Soil moisture (WH51)
-    for j in range(1, 9):
+    for j in range(1, 17):
         name = f"soilmoisture{j}"
         if name in data:
             data[name] = int(data[name])
