@@ -94,41 +94,23 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "baromabsin": EcoWittMapping("Absolute Pressure", EcoWittSensorTypes.PRESSURE_INHG),
     "baromrelin": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_INHG),
     "rainratein": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES),
-    "eventrainin": EcoWittMapping(
-        "Event Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
-    ),
-    "hourlyrainin": EcoWittMapping(
-        "Hourly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
-    ),
+    "eventrainin": EcoWittMapping("Event Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
+    "hourlyrainin": EcoWittMapping("Hourly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
     "totalrainin": EcoWittMapping("Total Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
-    "dailyrainin": EcoWittMapping(
-        "Daily Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
-    ),
-    "weeklyrainin": EcoWittMapping(
-        "Weekly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
-    ),
+    "dailyrainin": EcoWittMapping("Daily Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
+    "weeklyrainin": EcoWittMapping("Weekly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
     "monthlyrainin": EcoWittMapping(
         "Monthly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
     ),
-    "yearlyrainin": EcoWittMapping(
-        "Yearly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
-    ),
+    "yearlyrainin": EcoWittMapping("Yearly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
     "rainratemm": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
     "eventrainmm": EcoWittMapping("Event Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
-    "hourlyrainmm": EcoWittMapping(
-        "Hourly Rain", EcoWittSensorTypes.RAIN_COUNT_MM
-    ),
+    "hourlyrainmm": EcoWittMapping("Hourly Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
     "totalrainmm": EcoWittMapping("Total Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
     "dailyrainmm": EcoWittMapping("Daily Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
-    "weeklyrainmm": EcoWittMapping(
-        "Weekly Rain", EcoWittSensorTypes.RAIN_COUNT_MM
-    ),
-    "monthlyrainmm": EcoWittMapping(
-        "Monthly Rain", EcoWittSensorTypes.RAIN_COUNT_MM
-    ),
-    "yearlyrainmm": EcoWittMapping(
-        "Yearly Rain", EcoWittSensorTypes.RAIN_COUNT_MM
-    ),
+    "weeklyrainmm": EcoWittMapping("Weekly Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
+    "monthlyrainmm": EcoWittMapping("Monthly Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
+    "yearlyrainmm": EcoWittMapping("Yearly Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
     "humidity": EcoWittMapping("Humidity", EcoWittSensorTypes.HUMIDITY),
     "humidityin": EcoWittMapping("Indoor Humidity", EcoWittSensorTypes.HUMIDITY),
     "humidity1": EcoWittMapping("Humidity 1", EcoWittSensorTypes.HUMIDITY),
