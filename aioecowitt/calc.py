@@ -19,7 +19,7 @@ def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
 
 
 def weather_datapoints(
-    data: dict[str, str]
+    data: dict[str, str],
 ) -> dict[str, str | int | float | dt.datetime | None]:
     """Calculate and convert weather data."""
     mph_kmh = 1.60934
