@@ -19,7 +19,7 @@ def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
 
 
 def weather_datapoints(
-    data: dict[str, str]
+    data: dict[str, str],
 ) -> dict[str, str | int | float | dt.datetime | None]:
     """Calculate and convert weather data."""
     mph_kmh = 1.60934
@@ -151,6 +151,8 @@ def weather_datapoints(
     if "yrain_piezo" in data:
         data["yrain_piezo"] = float(data["yrain_piezo"])
         data["yrain_piezomm"] = round(data["yrain_piezo"] * in_mm, 1)
+    if "srain_piezo" in data:
+        data["srain_piezo"] = int(data["srain_piezo"])
 
     # Pressure
     if "baromrelin" in data:
@@ -187,7 +189,7 @@ def weather_datapoints(
         data["tempfeelsc"] = round(feels_like.c, 1)
 
     # Soil moisture (WH51)
-    for j in range(1, 9):
+    for j in range(1, 17):
         name = f"soilmoisture{j}"
         if name in data:
             data[name] = int(data[name])
