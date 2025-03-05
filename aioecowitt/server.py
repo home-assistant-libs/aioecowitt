@@ -95,11 +95,15 @@ class EcoWittListener:
 
     async def handler(self, request: web.BaseRequest) -> web.Response:
         """AIOHTTP handler for the API."""
-        if request.method != "POST":
-            return web.Response(status=405)
-        if self.path is not None and request.path != self.path:
-            return web.Response(status=404)
-        data = await request.post()
+        if request.method == "GET":
+            # Ambient Weather variant
+            data = request.query
+        else:
+            if request.method != "POST":
+                return web.Response(status=405)
+            if self.path is not None and request.path != self.path:
+                return web.Response(status=404)
+            data = await request.post()
 
         # data is not a dict, it's a MultiDict
         self.last_values[data["PASSKEY"]] = data.copy()
