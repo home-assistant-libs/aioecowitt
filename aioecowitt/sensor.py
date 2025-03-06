@@ -80,7 +80,8 @@ class EcoWittSensorTypes(enum.Enum):
     RAIN_STATE = 31
     PM1 = 32
     PM4 = 33
-    
+
+
 @dataclass
 class EcoWittMapping:
     """Mapping Sensor information."""
@@ -251,7 +252,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "pm1_co2": EcoWittMapping("WH46 PM1 CO2", EcoWittSensorTypes.PM1),
     "pm1_24h_co2": EcoWittMapping("WH46 PM1 CO2 24h average", EcoWittSensorTypes.PM1),
     "pm4_co2": EcoWittMapping("WH46 PM4 CO2", EcoWittSensorTypes.PM4),
-    "pm4_24h_co2": EcoWittMapping("WH46 PM4 CO2 24h average", EcoWittSensorTypes.PM4),    
+    "pm4_24h_co2": EcoWittMapping("WH46 PM4 CO2 24h average", EcoWittSensorTypes.PM4),
     "pm25_co2": EcoWittMapping("WH45 PM2.5 CO2", EcoWittSensorTypes.PM25),
     "pm25_24h_co2": EcoWittMapping(
         "WH45 PM2.5 CO2 24h average", EcoWittSensorTypes.PM25
