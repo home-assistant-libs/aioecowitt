@@ -215,8 +215,12 @@ def weather_datapoints(
         if leaf in data:
             data[leaf] = int(data[leaf])
 
-    # CO2 indoor air quality (WH45) (note temp is in temps above)
+    # CO2 indoor air quality (WH45/WH46/WH46D) (note temp is in temps above)
     pm_floats = [
+        "pm1",
+        "pm1_24h",
+        "pm4",
+        "pm4_24h",
         "pm25",
         "pm25_24h",
         "pm10",
