@@ -224,7 +224,7 @@ def weather_datapoints(
         "pm25",
         "pm25_24h",
         "pm10",
-        "pm10_24",
+        "pm10_24h",
     ]
     for prefix in pm_floats:
         name = f"{prefix}_co2"
