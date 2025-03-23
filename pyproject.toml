@@ -1,0 +1,35 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=77.0"]
+
+[project]
+name = "aioecowitt"
+version = "2025.3.1"
+license = "Apache-2.0"
+description = "Python wrapper for EcoWitt Protocol"
+readme = "README.md"
+authors = [{ name = "Home Assistant Team", email = "hello@home-assistant.io" }]
+requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Home Automation",
+]
+dependencies = [
+  "aiohttp>3",
+  "meteocalc>=1.1.0",
+]
+
+[project.urls]
+"Source code" = "https://github.com/home-assistant-libs/aioecowitt"
+
+[project.scripts]
+ecowitt-testserver = "aioecowitt.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["aioecowitt*"]
