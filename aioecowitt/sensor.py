@@ -79,7 +79,7 @@ class EcoWittSensorTypes(enum.Enum):
     SOIL_RAWADC = 30
     RAIN_STATE = 31
     SOIL_MOISTURE = 32
-    VPD_KPA = 33
+    VPD_INHG = 33
 
 
 @dataclass
@@ -95,7 +95,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "baromrelhpa": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_HPA),
     "baromabsin": EcoWittMapping("Absolute Pressure", EcoWittSensorTypes.PRESSURE_INHG),
     "baromrelin": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_INHG),
-    "vpd": EcoWittMapping("Vapour Pressure Deficit", EcoWittSensorTypes.VPD_KPA),
+    "vpd": EcoWittMapping("Vapour Pressure Deficit", EcoWittSensorTypes.VPD_INHG),
     "rainratein": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES),
     "eventrainin": EcoWittMapping("Event Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
     "hourlyrainin": EcoWittMapping("Hourly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
