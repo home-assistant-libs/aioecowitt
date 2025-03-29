@@ -162,6 +162,10 @@ def weather_datapoints(
         data["baromabsin"] = float(data["baromabsin"])
         data["baromabshpa"] = round(data["baromabsin"] * in_hpa, 1)
 
+    # Vapour Pressure Deficit
+    if "vpd" in data:
+        data["vpd"] = float(data["vpd"])
+
     # Wind chill
     if "tempf" in data and "windspeedmph" in data:
         try:
