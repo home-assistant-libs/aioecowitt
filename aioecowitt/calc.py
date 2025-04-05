@@ -244,6 +244,12 @@ def weather_datapoints(
         "wh80",
         "wh90",
         "co2_",
+        "_co2",
+        "out",
+        "in",
+        "_25",
+        "_lightning",
+        "_cellgateway",
     ]
     for prefix in bat_names:
         name = f"{prefix}batt"
@@ -253,7 +259,18 @@ def weather_datapoints(
                 data[name] = int(data[name]) * 20
             else:
                 data[name] = float(data[name])
-
+   
+    for suffix in bat_names:
+        name = f"batt{suffix}"
+        if name in data:
+            batt_type = SENSOR_MAP[name].stype
+            if batt_type == EcoWittSensorTypes.BATTERY_BINARY:
+                data[name] = int(data[name])
+            elif batt_type == EcoWittSensorTypes.BATTERY_BINARY_INVERTED:
+                data[name] = int(data[name])
+            else:
+                data[name] = float(data[name])
+                
     bat_range_names = [
         "",  # for just 'batt'
         "soil",
@@ -261,6 +278,7 @@ def weather_datapoints(
         "leak",
         "tf_",  # WN34 voltage type
         "leaf_",
+        "tsm", # Ambient Weather soil moisture
     ]
     for r_prefix in bat_range_names:
         for j in range(1, 9):
@@ -269,6 +287,22 @@ def weather_datapoints(
                 batt_type = SENSOR_MAP[name].stype
                 if batt_type == EcoWittSensorTypes.BATTERY_PERCENTAGE:
                     data[name] = int(data[name]) * 20
+                elif batt_type == EcoWittSensorTypes.BATTERY_BINARY:
+                    data[name] = int(data[name])
+                elif batt_type == EcoWittSensorTypes.BATTERY_BINARY_INVERTED:
+                    data[name] = int(data[name])
+                else:
+                    data[name] = float(data[name])
+
+    for r_suffix in bat_range_names:
+        for j in range(1, 5):
+            name = f"bat{r_suffix}{j}"
+            if name in data:
+                batt_type = SENSOR_MAP[name].stype
+                if batt_type == EcoWittSensorTypes.BATTERY_BINARY:
+                    data[name] = int(data[name])
+                elif batt_type == EcoWittSensorTypes.BATTERY_BINARY_INVERTED:
+                    data[name] = int(data[name])
                 else:
                     data[name] = float(data[name])
 
