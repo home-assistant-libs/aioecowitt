@@ -79,7 +79,8 @@ class EcoWittSensorTypes(enum.Enum):
     SOIL_RAWADC = 30
     RAIN_STATE = 31
     SOIL_MOISTURE = 32
-    BATTERY_BINARY_INVERTED = 33
+    
+    BATTERY_BINARY_INVERTED = 34
 
 
 @dataclass
