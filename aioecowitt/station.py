@@ -25,7 +25,7 @@ def extract_station(data: dict[str, str]) -> EcoWittStation:
     """Extract station from data."""
     station = data.pop("stationtype")
     passkey = data.pop("PASSKEY")
-    model = data.pop("model")
+    model = data.pop("model", None)
     frequence = data.pop("freq", None)
 
     version = None
