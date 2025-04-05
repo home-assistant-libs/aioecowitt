@@ -281,7 +281,7 @@ def weather_datapoints(
         "tsm", # Ambient Weather soil moisture
     ]
     for r_prefix in bat_range_names:
-        for j in range(1, 9):
+        for j in range(1, 11):
             name = f"{r_prefix}batt{j}"
             if name in data:
                 batt_type = SENSOR_MAP[name].stype
