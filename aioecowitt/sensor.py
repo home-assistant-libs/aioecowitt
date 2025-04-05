@@ -79,6 +79,7 @@ class EcoWittSensorTypes(enum.Enum):
     SOIL_RAWADC = 30
     RAIN_STATE = 31
     SOIL_MOISTURE = 32
+    BATTERY_BINARY_INVERTED = 33
 
 
 @dataclass
@@ -306,6 +307,18 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "console_batt": EcoWittMapping(
         "Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
+        "batt_co2": EcoWittMapping("CO2 battery", EcoWittSensorTypes.BATTERY_BINARY),
+    "battout": EcoWittMapping("Outdoor Battery", EcoWittSensorTypes.BATTERY_BINARY),
+    "battin": EcoWittMapping("Indoor Battery", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt_25": EcoWittMapping(
+        "PM2.5 Air Quality Sensor Battery", EcoWittSensorTypes.BATTERY_BINARY
+    ),
+    "batt_lightning": EcoWittMapping(
+        "Lightning Detector Battery", EcoWittSensorTypes.BATTERY_BINARY_INVERTED
+    ),
+    "batt_cellgateway": EcoWittMapping(
+        "Cellular Gateway", EcoWittSensorTypes.BATTERY_BINARY
+    ),
     "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),
@@ -330,6 +343,24 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "batt6": EcoWittMapping("Battery 6", EcoWittSensorTypes.BATTERY_BINARY),
     "batt7": EcoWittMapping("Battery 7", EcoWittSensorTypes.BATTERY_BINARY),
     "batt8": EcoWittMapping("Battery 8", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt9": EcoWittMapping("Battery 9", EcoWittSensorTypes.BATTERY_BINARY),
+    "batt10": EcoWittMapping("Battery 10", EcoWittSensorTypes.BATTERY_BINARY),
+    "batleak1": EcoWittMapping(
+        "Leak Detector Battery 1", EcoWittSensorTypes.BATTERY_BINARY_INVERTED
+    ),
+    "batleak2": EcoWittMapping(
+        "Leak Detector Battery 2", EcoWittSensorTypes.BATTERY_BINARY_INVERTED
+    ),
+    "batleak3": EcoWittMapping(
+        "Leak Detector Battery 3", EcoWittSensorTypes.BATTERY_BINARY_INVERTED
+    ),
+    "batleak4": EcoWittMapping(
+        "Leak Detector Battery 4", EcoWittSensorTypes.BATTERY_BINARY_INVERTED
+    ),
+    "battsm1": EcoWittMapping("Soil Moisture Battery 1", EcoWittSensorTypes.BATTERY_BINARY),
+    "battsm2": EcoWittMapping("Soil Moisture Battery 2", EcoWittSensorTypes.BATTERY_BINARY),
+    "battsm3": EcoWittMapping("Soil Moisture Battery 3", EcoWittSensorTypes.BATTERY_BINARY),
+    "battsm4": EcoWittMapping("Soil Moisture Battery 4", EcoWittSensorTypes.BATTERY_BINARY),
     "pm25batt1": EcoWittMapping(
         "PM2.5 1 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE
     ),
