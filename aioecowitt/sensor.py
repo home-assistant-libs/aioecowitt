@@ -79,6 +79,7 @@ class EcoWittSensorTypes(enum.Enum):
     SOIL_RAWADC = 30
     RAIN_STATE = 31
     SOIL_MOISTURE = 32
+    LDS_MM = 35
 
 
 @dataclass
@@ -456,6 +457,54 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "leaf_batt8": EcoWittMapping(
         "Leaf Wetness 8 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "depth_ch1": EcoWittMapping(
+        "Current Depth 1", EcoWittSensorTypes.LDS_MM
+    ),
+    "depth_ch2": EcoWittMapping(
+        "Current Depth 2", EcoWittSensorTypes.LDS_MM
+    ),
+    "depth_ch3": EcoWittMapping(
+        "Current Depth 3", EcoWittSensorTypes.LDS_MM
+    ),
+    "depth_ch4": EcoWittMapping(
+        "Current Depth 4", EcoWittSensorTypes.LDS_MM
+    ),
+    "thi_ch1": EcoWittMapping(
+        "Total Historical Depth Index 1", EcoWittSensorTypes.LDS_MM
+    ),
+    "thi_ch2": EcoWittMapping(
+        "Total Historical Depth Index 2", EcoWittSensorTypes.LDS_MM
+    ),
+    "thi_ch3": EcoWittMapping(
+        "Total Historical Depth Index 3", EcoWittSensorTypes.LDS_MM
+    ),
+    "thi_ch4": EcoWittMapping(
+        "Total Historical Depth Index 4", EcoWittSensorTypes.LDS_MM
+    ),
+    "air_ch1": EcoWittMapping(
+        "Air Gap 1", EcoWittSensorTypes.LDS_MM
+    ),
+    "air_ch2": EcoWittMapping(
+        "Air Gap 2", EcoWittSensorTypes.LDS_MM
+    ),
+    "air_ch3": EcoWittMapping(
+        "Air Gap 3", EcoWittSensorTypes.LDS_MM
+    ),
+    "air_ch4": EcoWittMapping(
+        "Air Gap 4", EcoWittSensorTypes.LDS_MM
+    ),
+    "ldsbatt1": EcoWittMapping(
+        "LDS 1 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsbatt2": EcoWittMapping(
+        "LDS 2 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsbatt3": EcoWittMapping(
+        "LDS 3 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsbatt4": EcoWittMapping(
+        "LDS 4 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
     ),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),

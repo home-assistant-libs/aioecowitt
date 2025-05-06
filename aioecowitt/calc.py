@@ -214,6 +214,18 @@ def weather_datapoints(
         leaf = f"leafwetness_ch{j}"
         if leaf in data:
             data[leaf] = int(data[leaf])
+    
+    # Depth sensor (LDS01)
+    lds_range_names = [
+        "thi_",
+        "depth_",
+        "air_",
+    ]
+    for r_prefix in lds_range_names:
+        for j in range(1, 5):
+            name = f"{r_prefix}ch{j}"
+            if name in data:
+                data[name] = int(data[name])
 
     # CO2 indoor air quality (WH45) (note temp is in temps above)
     pm_floats = [
@@ -261,6 +273,7 @@ def weather_datapoints(
         "leak",
         "tf_",  # WN34 voltage type
         "leaf_",
+        "lds", # LDS01 voltage type
     ]
     for r_prefix in bat_range_names:
         for j in range(1, 9):
