@@ -11,9 +11,7 @@ def ecowitt_server():
 
 
 @pytest.fixture
-def ecowitt_http(event_loop, aiohttp_raw_server, aiohttp_client, ecowitt_server):
+async def ecowitt_http(aiohttp_raw_server, aiohttp_client, ecowitt_server):
     """EcoWitt HTTP fixture."""
-    raw_server = event_loop.run_until_complete(
-        aiohttp_raw_server(ecowitt_server.handler)
-    )
-    return event_loop.run_until_complete(aiohttp_client(raw_server))
+    raw_server = await aiohttp_raw_server(ecowitt_server.handler)
+    return await aiohttp_client(raw_server)
