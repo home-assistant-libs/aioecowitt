@@ -9,15 +9,13 @@ license = "Apache-2.0"
 description = "Python wrapper for EcoWitt Protocol"
 readme = "README.md"
 authors = [{ name = "Home Assistant Team", email = "hello@home-assistant.io" }]
-requires-python = ">=3.9"
+requires-python = ">=3.13"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Natural Language :: English",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Home Automation",
 ]
 dependencies = [
