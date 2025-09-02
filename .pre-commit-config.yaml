@@ -1,6 +1,3 @@
-default_language_version:
-  python: python3.13
-
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.11
@@ -36,3 +33,19 @@ repos:
       - id: no-commit-to-branch
         args: [--branch, main, --branch, dev]
       - id: requirements-txt-fixer
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: Check with mypy
+        entry: scripts/run-in-env.sh mypy
+        language: script
+        types:
+          - python
+
+      - id: pylint
+        name: Check with pylint
+        entry: scripts/run-in-env.sh pylint
+        language: script
+        types:
+          - python

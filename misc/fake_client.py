@@ -1,13 +1,10 @@
-"""
-A bone-simple fake client used to test the hass integration
-"""
+"""A bone-simple fake client used to test the hass integration."""
 
 import http.client
 import sys
 import urllib.parse
 
 MY_PASSKEY = "34271334ED1FADA6D8B988B14267E55D"
-# MY_PASSKEY = '35271334ED1FADA7D8B988B22222E22D'
 
 paramset_a = {
     "PASSKEY": MY_PASSKEY,
@@ -89,14 +86,15 @@ paramset_b = {
 }
 
 
-def usage():
+def usage() -> None:
+    """Print usage of the CLI."""
     print(f"Usage: {sys.argv[0]} host port")
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         usage()
-        exit(1)
+        sys.exit(1)
 
     host = sys.argv[1]
     port = sys.argv[2]
@@ -108,7 +106,7 @@ if __name__ == "__main__":
     print(f"Connecting to host {host} on port {port}")
     conn = http.client.HTTPConnection(host, port)
     headers = {"Content-type": "application/x-www-form-urlencoded"}
-    params = urllib.parse.urlencode(paramset_b)
+    params = urllib.parse.urlencode(paramset_b)  # pylint: disable=invalid-name
     print(params)
     conn.request("POST", "", params, headers)
     response = conn.getresponse()

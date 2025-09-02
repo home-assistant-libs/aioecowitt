@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-import datetime as dt
-from collections.abc import Callable
-
-from dataclasses import dataclass, field
 import enum
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
-from .station import EcoWittStation
+if TYPE_CHECKING:
+    import datetime as dt
+    from collections.abc import Callable
+
+    from .station import EcoWittStation
 
 
 @dataclass
@@ -26,7 +28,7 @@ class EcoWittSensor:
 
     def update_value(
         self,
-        value: None | str | int | float | dt.datetime,
+        value: None | str | float | dt.datetime,
         last_update: float,
         last_update_m: float,
     ) -> None:

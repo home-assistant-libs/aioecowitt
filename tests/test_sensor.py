@@ -1,7 +1,11 @@
 """Test ecowitt sensor module."""
 
-from .const import GW2000A_V3_DATA
+from pytest_aiohttp import AiohttpClient
+
 from aioecowitt.sensor import EcoWittSensor, EcoWittSensorTypes
+from aioecowitt.server import EcoWittListener
+
+from .const import GW2000A_V3_DATA
 
 
 def test_update_listener() -> None:
@@ -30,7 +34,9 @@ def test_update_listener() -> None:
     assert called
 
 
-async def test_heap_field(ecowitt_server, ecowitt_http) -> None:
+async def test_heap_field(
+    ecowitt_server: EcoWittListener, ecowitt_http: AiohttpClient
+) -> None:
     """Test handling of heap field."""
     heap_sensor = None
 

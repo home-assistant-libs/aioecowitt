@@ -15,10 +15,10 @@ def _ftoc(fahrenheit: float | str) -> float:
 
 
 def _timestamp_to_datetime(timestamp: int) -> dt.datetime:
-    return dt.datetime.fromtimestamp(timestamp, dt.timezone.utc)
+    return dt.datetime.fromtimestamp(timestamp, dt.UTC)
 
 
-def weather_datapoints(
+def weather_datapoints(  # noqa: C901, PLR0912, PLR0915
     data: dict[str, str],
 ) -> dict[str, str | int | float | dt.datetime | None]:
     """Calculate and convert weather data."""
@@ -54,7 +54,7 @@ def weather_datapoints(
     if "lightning" in data:
         if data["lightning"]:
             data["lightning"] = int(data["lightning"])
-            data["lightning_mi"] = int(round(data["lightning"] * km_mi))
+            data["lightning_mi"] = round(data["lightning"] * km_mi)
         else:
             data["lightning"] = None
 
@@ -65,7 +65,7 @@ def weather_datapoints(
     if "tempinf" in data:
         data["tempinf"] = float(data["tempinf"])
         data["tempinc"] = _ftoc(data["tempinf"])
-    # (WH45)
+    # WH45
     if "tf_co2" in data:
         data["tf_co2"] = float(data["tf_co2"])
         data["tf_co2c"] = _ftoc(data["tf_co2"])

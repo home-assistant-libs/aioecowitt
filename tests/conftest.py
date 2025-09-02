@@ -1,17 +1,23 @@
+"""Configuration."""
+
 import pytest
+from pytest_aiohttp import AiohttpClient, AiohttpRawServer
 
 from aioecowitt import server
 
 
-@pytest.fixture
-def ecowitt_server():
+@pytest.fixture(name="ecowitt_server")
+def ecowitt_server_fixture() -> server.EcoWittListener:
     """EcoWitt server fixture."""
-    ecowitt_server = server.EcoWittListener()
-    yield ecowitt_server
+    return server.EcoWittListener()
 
 
 @pytest.fixture
-async def ecowitt_http(aiohttp_raw_server, aiohttp_client, ecowitt_server):
+async def ecowitt_http(
+    aiohttp_raw_server: AiohttpRawServer,
+    aiohttp_client: AiohttpClient,
+    ecowitt_server: server.EcoWittListener,
+) -> AiohttpClient:
     """EcoWitt HTTP fixture."""
     raw_server = await aiohttp_raw_server(ecowitt_server.handler)
     return await aiohttp_client(raw_server)

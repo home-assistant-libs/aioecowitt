@@ -1,13 +1,17 @@
 """EcoWitt server tests."""
 
+from pytest_aiohttp import AiohttpClient
+
 from aioecowitt import server
 
-from .const import GW2000A_DATA, EASYWEATHER_DATA
+from .const import EASYWEATHER_DATA, GW2000A_DATA
 
 # pylint: disable=redefined-outer-name
 
 
-async def test_server_start(ecowitt_server, ecowitt_http) -> None:
+async def test_server_start(
+    ecowitt_server: server.EcoWittListener, ecowitt_http: AiohttpClient
+) -> None:
     """Test server start."""
     sensors = []
 
@@ -29,7 +33,9 @@ async def test_server_start(ecowitt_server, ecowitt_http) -> None:
     assert "PASSKEY" not in ecowitt_server.last_values[GW2000A_DATA["PASSKEY"]]
 
 
-async def test_server_token(ecowitt_server, ecowitt_http) -> None:
+async def test_server_token(
+    ecowitt_server: server.EcoWittListener, ecowitt_http: AiohttpClient
+) -> None:
     """Test server start."""
     sensors = []
     path = "/test"
@@ -54,7 +60,9 @@ async def test_server_token(ecowitt_server, ecowitt_http) -> None:
     assert len(ecowitt_server.stations) == 1
 
 
-async def test_server_multi_stations(ecowitt_server, ecowitt_http) -> None:
+async def test_server_multi_stations(
+    ecowitt_server: server.EcoWittListener, ecowitt_http: AiohttpClient
+) -> None:
     """Test server start and multiple stations."""
     sensors = []
 

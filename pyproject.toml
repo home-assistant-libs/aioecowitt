@@ -35,3 +35,36 @@ asyncio_mode = "auto"
 
 [tool.setuptools.packages.find]
 include = ["aioecowitt*"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+ignore = [
+    "ANN401", # Opinioated warning on disallowing dynamically typed expressions
+    "D203",   # Conflicts with other rules
+    "D213",   # Conflicts with other rules
+    "EM101",  # raw-string-in-exception
+
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in `__init__`
+
+    "FBT", # flake8-boolean-trap
+
+    "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable
+
+    # Conflicts with the Ruff formatter
+    "COM812",
+
+    "TRY003", # raise-vanilla-args: Avoid specifying long messages outside the exception class
+    "T201", # print found,
+    "D401", # First line of docstring should be in imperative mood
+
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D100",    # Missing docstring in public module
+    "D103",    # Missing docstring in public function
+    "D104",    # Missing docstring in public package
+    "S101",    # Use of assert detected
+]
