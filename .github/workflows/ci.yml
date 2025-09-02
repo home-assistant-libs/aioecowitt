@@ -38,4 +38,4 @@ jobs:
           pip install -e .
           pip install -r requirements_tests.txt
       - name: Run pre-commit checks
-        run: pre-commit run --all-files
+        run: SKIP=no-commit-to-branch pre-commit run --all-files
