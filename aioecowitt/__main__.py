@@ -19,6 +19,15 @@ async def my_handler(sensor: EcoWittSensor) -> None:
     print(f"{sensor!s}")
 
 
+async def run_server(ecowitt_ws: EcoWittListener) -> None:
+    """Run server in endless mode."""
+    event = asyncio.Event()
+    await ecowitt_ws.start()
+    while True:
+        # use event to wait endless instead of sleep
+        await event.wait()
+
+
 def main() -> None:
     """Run main."""
     if len(sys.argv) < 2:
@@ -29,11 +38,8 @@ def main() -> None:
     ecowitt_server = EcoWittListener(port=sys.argv[1])
 
     ecowitt_server.new_sensor_cb.append(my_handler)
-    loop = asyncio.new_event_loop()
-    loop.create_task(ecowitt_server.start())  # noqa: RUF006
-
     try:
-        loop.run_forever()
+        asyncio.run(run_server(ecowitt_server))
     except Exception as err:  # pylint: disable=broad-except # noqa: BLE001
         print(str(err))
     print("Exiting")
