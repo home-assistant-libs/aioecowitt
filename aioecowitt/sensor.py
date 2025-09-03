@@ -313,6 +313,11 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "co2": EcoWittMapping("WH45 CO2", EcoWittSensorTypes.CO2_PPM),
     "co2_24h": EcoWittMapping("WH45 CO2 24h average", EcoWittSensorTypes.CO2_PPM),
     "co2_batt": EcoWittMapping("WH45 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE),
+    "co2in": EcoWittMapping("Console CO2", EcoWittSensorTypes.CO2_PPM),
+    "co2in_24h": EcoWittMapping("Console CO2 24h average", EcoWittSensorTypes.CO2_PPM),
+    "console_batt": EcoWittMapping(
+        "Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
     "leak_ch1": EcoWittMapping("Leak Detection 1", EcoWittSensorTypes.LEAK),
     "leak_ch2": EcoWittMapping("Leak Detection 2", EcoWittSensorTypes.LEAK),
     "leak_ch3": EcoWittMapping("Leak Detection 3", EcoWittSensorTypes.LEAK),
@@ -324,9 +329,8 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "wh65batt": EcoWittMapping("WH65 Battery", EcoWittSensorTypes.BATTERY_BINARY),
     "wh68batt": EcoWittMapping("WH68 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh80batt": EcoWittMapping("WH80 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "console_batt": EcoWittMapping(
-        "Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
-    ),
+    "wh85batt": EcoWittMapping("WH85 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),
@@ -481,7 +485,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
-    "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "ws85cap_volt": EcoWittMapping("WH85 Capacitor", EcoWittSensorTypes.VOLTAGE),
     "ws90cap_volt": EcoWittMapping("WH90 Capacitor", EcoWittSensorTypes.VOLTAGE),
     "rrain_piezo": EcoWittMapping(
         "Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
