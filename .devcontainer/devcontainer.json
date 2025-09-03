@@ -5,8 +5,9 @@
 	  "dockerfile": "Dockerfile",
 	  "context": ".."
 	},
-  "postCreateCommand": "pip3 install -e . && pip3 install -r requirements_tests.txt && pre-commit install",
-  "runArgs": ["-e", "GIT_EDITOR=code --wait", "--privileged"],
+  "postCreateCommand": "pip install -r requirements_tests.txt && pre-commit install",
+  "postStartCommand": "pip install -r requirements_tests.txt && pip install -e .",
+  "runArgs": ["-e", "GIT_EDITOR=code --wait"],
   "customizations": {
     "vscode": {
       "extensions": [
@@ -39,6 +40,5 @@
         }
       }
     }
-  },
-  "mounts": [ "type=volume,target=/var/lib/docker" ]
+  }
 }
