@@ -8,7 +8,7 @@ import sys
 from aioecowitt import EcoWittListener, EcoWittSensor
 
 
-def usage():
+def usage() -> None:
     """Print usage of the CLI."""
     print(f"Usage: {sys.argv[0]} port")
 
@@ -16,14 +16,15 @@ def usage():
 async def my_handler(sensor: EcoWittSensor) -> None:
     """Callback handler for printing data."""
     print("In my handler")
-    print(f"{str(sensor)}")
+    print(f"{sensor!s}")
 
 
 async def run_server(ecowitt_ws: EcoWittListener) -> None:
     """Run server in endless mode."""
+    event = asyncio.Event()
     await ecowitt_ws.start()
-    while True:
-        await asyncio.sleep(100000)
+    # use event to wait endless instead of sleep in a loop
+    await event.wait()
 
 
 def main() -> None:
@@ -38,7 +39,7 @@ def main() -> None:
     ecowitt_server.new_sensor_cb.append(my_handler)
     try:
         asyncio.run(run_server(ecowitt_server))
-    except Exception as err:  # pylint: disable=broad-except
+    except Exception as err:  # pylint: disable=broad-except # noqa: BLE001
         print(str(err))
     print("Exiting")
 

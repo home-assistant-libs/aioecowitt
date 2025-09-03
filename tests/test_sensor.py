@@ -1,17 +1,20 @@
 """Test ecowitt sensor module."""
 
-import pytest
+from typing import Any
 
-from aioecowitt import server
+import pytest
+from pytest_aiohttp import AiohttpClient
+
+from aioecowitt.sensor import EcoWittSensor, EcoWittSensorTypes
+from aioecowitt.server import EcoWittListener
 
 from .const import GW2000A_V3_DATA
-from aioecowitt import sensor
 
 
 def test_update_listener() -> None:
     """Test on change get updates from callback."""
-    ecowit_sensor = sensor.EcoWittSensor(
-        "test", "test", sensor.EcoWittSensorTypes.TEMPERATURE_C, "test"
+    ecowit_sensor = EcoWittSensor(
+        "test", "test", EcoWittSensorTypes.TEMPERATURE_C, "test"
     )
 
     called = False
@@ -34,23 +37,35 @@ def test_update_listener() -> None:
     assert called
 
 
-@pytest.mark.asyncio
-async def test_heap_field(ecowitt_server, ecowitt_http) -> None:
-    """Test handling of heap field."""
-    heap_sensor = None
+@pytest.mark.parametrize(
+    ("sensor_key", "expected_value", "request_data"),
+    [
+        ("heap", GW2000A_V3_DATA["heap"], GW2000A_V3_DATA),
+        ("vpd", 0.091, {**GW2000A_V3_DATA, "vpd": "0.091"}),
+    ],
+)
+async def test_sensor(
+    ecowitt_server: EcoWittListener,
+    ecowitt_http: AiohttpClient,
+    sensor_key: str,
+    expected_value: Any,
+    request_data: dict[str, Any],
+) -> None:
+    """Test sensor is correct handled."""
+    target_sensor = None
 
-    def on_change(sensor: server.EcoWittSensor) -> None:
+    def on_change(sensor: EcoWittSensor) -> None:
         """Test callback."""
-        if sensor.key == "heap":
-            nonlocal heap_sensor
-            heap_sensor = sensor
+        if sensor.key == sensor_key:
+            nonlocal target_sensor
+            target_sensor = sensor
 
     ecowitt_server.new_sensor_cb.append(on_change)
 
-    resp = await ecowitt_http.post("/", data=GW2000A_V3_DATA)
+    resp = await ecowitt_http.post("/", data=request_data)
     assert resp.status == 200
     text = await resp.text()
     assert text == "OK"
 
-    assert heap_sensor
-    assert heap_sensor.value == GW2000A_V3_DATA["heap"]
+    assert target_sensor
+    assert target_sensor.value == expected_value

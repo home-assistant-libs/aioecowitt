@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Callable
-
-from dataclasses import dataclass, field
 import enum
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Self
 
-from .station import EcoWittStation
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from .station import EcoWittStation
 
 
 @dataclass
@@ -26,7 +28,7 @@ class EcoWittSensor:
 
     def update_value(
         self,
-        value: None | str | int | float | dt.datetime,
+        value: None | str | float | dt.datetime,
         last_update: float,
         last_update_m: float,
     ) -> None:
@@ -44,40 +46,60 @@ class EcoWittSensor:
             callback()
 
 
-class EcoWittSensorTypes(enum.Enum):
+def _convert_timestamp(value: str) -> dt.datetime:
+    return dt.datetime.fromtimestamp(int(value), dt.UTC)
+
+
+@enum.unique
+class EcoWittSensorTypes(enum.IntEnum):
     """EcoWitt sensor types."""
 
-    INTERNAL = 1
-    PRESSURE_HPA = 2
-    PRESSURE_INHG = 3
-    RAIN_COUNT_MM = 4
-    RAIN_COUNT_INCHES = 5
-    RAIN_RATE_MM = 6
-    RAIN_RATE_INCHES = 7
-    HUMIDITY = 8
-    DEGREE = 9
-    SPEED_KPH = 10
-    SPEED_MPH = 11
-    TEMPERATURE_C = 12
-    TEMPERATURE_F = 13
-    WATT_METERS_SQUARED = 14
-    UV_INDEX = 15
-    PM25 = 16
-    PM10 = 17
-    TIMESTAMP = 18
-    LIGHTNING_COUNT = 19
-    LIGHTNING_DISTANCE_KM = 20
-    LIGHTNING_DISTANCE_MILES = 21
-    LEAK = 22
-    VOLTAGE = 23
-    BATTERY_BINARY = 24
-    BATTERY_VOLTAGE = 25
-    BATTERY_PERCENTAGE = 26
-    CO2_PPM = 27
-    LUX = 28
-    PERCENTAGE = 29
-    SOIL_RAWADC = 30
-    RAIN_STATE = 31
+    convert_fn: Callable[[str], str | int | float | dt.datetime]
+
+    def __new__(
+        cls,
+        value: int,
+        convert_fn: Callable[[str], str | int | float | dt.datetime],
+    ) -> Self:
+        """Create new EcoWittSensorTypes."""
+        obj = int.__new__(cls, value)
+        obj._value_ = value
+        obj.convert_fn = convert_fn
+        return obj
+
+    INTERNAL = 1, lambda x: x
+    PRESSURE_HPA = 2, lambda x: x  # HA should convert
+    PRESSURE_INHG = 3, float
+    RAIN_COUNT_MM = 4, lambda x: x  # HA should convert
+    RAIN_COUNT_INCHES = 5, float
+    RAIN_RATE_MM = 6, lambda x: x  # HA should convert
+    RAIN_RATE_INCHES = 7, float
+    HUMIDITY = 8, int
+    DEGREE = 9, int
+    SPEED_KPH = 10, lambda x: x  # HA should convert
+    SPEED_MPH = 11, float
+    TEMPERATURE_C = 12, lambda x: x  # HA should convert
+    TEMPERATURE_F = 13, float
+    WATT_METERS_SQUARED = 14, float
+    UV_INDEX = 15, int
+    PM25 = 16, float
+    PM10 = 17, float
+    TIMESTAMP = 18, _convert_timestamp
+    LIGHTNING_COUNT = 19, int
+    LIGHTNING_DISTANCE_KM = 20, int
+    LIGHTNING_DISTANCE_MILES = 21, lambda x: x  # HA should convert
+    LEAK = 22, int
+    VOLTAGE = 23, float
+    BATTERY_BINARY = 24, float
+    BATTERY_VOLTAGE = 25, float
+    BATTERY_PERCENTAGE = 26, lambda x: int(x) * 20
+    CO2_PPM = 27, int
+    LUX = 28, lambda x: x  # HA should convert
+    PERCENTAGE = 29, int
+    SOIL_RAWADC = 30, lambda x: x  # Keep it as it comes in
+    RAIN_STATE = 31, int
+    SOIL_MOISTURE = 32, int
+    VPD_INHG = 33, float
 
 
 @dataclass
@@ -93,6 +115,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "baromrelhpa": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_HPA),
     "baromabsin": EcoWittMapping("Absolute Pressure", EcoWittSensorTypes.PRESSURE_INHG),
     "baromrelin": EcoWittMapping("Relative Pressure", EcoWittSensorTypes.PRESSURE_INHG),
+    "vpd": EcoWittMapping("Vapour Pressure Deficit", EcoWittSensorTypes.VPD_INHG),
     "rainratein": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_INCHES),
     "eventrainin": EcoWittMapping("Event Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
     "hourlyrainin": EcoWittMapping("Hourly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
@@ -191,22 +214,54 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "solarradiation_lux": EcoWittMapping("Solar Lux", EcoWittSensorTypes.LUX),
     "uv": EcoWittMapping("UV Index", EcoWittSensorTypes.UV_INDEX),
-    "soilmoisture1": EcoWittMapping("Soil Moisture 1", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture2": EcoWittMapping("Soil Moisture 2", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture3": EcoWittMapping("Soil Moisture 3", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture4": EcoWittMapping("Soil Moisture 4", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture5": EcoWittMapping("Soil Moisture 5", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture6": EcoWittMapping("Soil Moisture 6", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture7": EcoWittMapping("Soil Moisture 7", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture8": EcoWittMapping("Soil Moisture 8", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture9": EcoWittMapping("Soil Moisture 9", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture10": EcoWittMapping("Soil Moisture 10", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture11": EcoWittMapping("Soil Moisture 11", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture12": EcoWittMapping("Soil Moisture 12", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture13": EcoWittMapping("Soil Moisture 13", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture14": EcoWittMapping("Soil Moisture 14", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture15": EcoWittMapping("Soil Moisture 15", EcoWittSensorTypes.HUMIDITY),
-    "soilmoisture16": EcoWittMapping("Soil Moisture 16", EcoWittSensorTypes.HUMIDITY),
+    "soilmoisture1": EcoWittMapping(
+        "Soil Moisture 1", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture2": EcoWittMapping(
+        "Soil Moisture 2", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture3": EcoWittMapping(
+        "Soil Moisture 3", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture4": EcoWittMapping(
+        "Soil Moisture 4", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture5": EcoWittMapping(
+        "Soil Moisture 5", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture6": EcoWittMapping(
+        "Soil Moisture 6", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture7": EcoWittMapping(
+        "Soil Moisture 7", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture8": EcoWittMapping(
+        "Soil Moisture 8", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture9": EcoWittMapping(
+        "Soil Moisture 9", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture10": EcoWittMapping(
+        "Soil Moisture 10", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture11": EcoWittMapping(
+        "Soil Moisture 11", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture12": EcoWittMapping(
+        "Soil Moisture 12", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture13": EcoWittMapping(
+        "Soil Moisture 13", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture14": EcoWittMapping(
+        "Soil Moisture 14", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture15": EcoWittMapping(
+        "Soil Moisture 15", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soilmoisture16": EcoWittMapping(
+        "Soil Moisture 16", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
     "soilad1": EcoWittMapping("Soil AD 1", EcoWittSensorTypes.SOIL_RAWADC),
     "soilad2": EcoWittMapping("Soil AD 2", EcoWittSensorTypes.SOIL_RAWADC),
     "soilad3": EcoWittMapping("Soil AD 3", EcoWittSensorTypes.SOIL_RAWADC),
@@ -260,7 +315,9 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "co2_batt": EcoWittMapping("WH45 Battery", EcoWittSensorTypes.BATTERY_PERCENTAGE),
     "co2in": EcoWittMapping("Console CO2", EcoWittSensorTypes.CO2_PPM),
     "co2in_24h": EcoWittMapping("Console CO2 24h average", EcoWittSensorTypes.CO2_PPM),
-    "console_batt": EcoWittMapping("Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "console_batt": EcoWittMapping(
+        "Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
     "leak_ch1": EcoWittMapping("Leak Detection 1", EcoWittSensorTypes.LEAK),
     "leak_ch2": EcoWittMapping("Leak Detection 2", EcoWittSensorTypes.LEAK),
     "leak_ch3": EcoWittMapping("Leak Detection 3", EcoWittSensorTypes.LEAK),
@@ -274,9 +331,6 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "wh80batt": EcoWittMapping("WH80 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh85batt": EcoWittMapping("WH85 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "console_batt": EcoWittMapping(
-        "Console Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
-    ),
     "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),

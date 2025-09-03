@@ -1,13 +1,13 @@
-"""Test for calulcated values from calc.py"""
+"""Test for calulcated values from calc.py."""
 
 from aioecowitt import calc
 
 from .const import EASYWEATHER_DATA, GW2000A_DATA
 
 
-def test_gw2000a_v2():
-    """Test Calculated values from GW2000A_V2"""
-    values = calc.weather_datapoints(GW2000A_DATA)
+def test_gw2000a_v2() -> None:
+    """Test Calculated values from GW2000A_V2."""
+    values = calc.weather_datapoints(GW2000A_DATA.copy())
 
     assert values == {
         "PASSKEY": "345544D8EAF42E1B8824A86D8250D5A3",
@@ -70,9 +70,9 @@ def test_gw2000a_v2():
     }
 
 
-def test_easyweather():
+def test_easyweather() -> None:
     """Test EasyWeather station."""
-    values = calc.weather_datapoints(EASYWEATHER_DATA)
+    values = calc.weather_datapoints(EASYWEATHER_DATA.copy())
 
     assert values == {
         "PASSKEY": "34271334ED1FADA6D8B988B14267E55D",

@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Callable
+from typing import TYPE_CHECKING
 
 from aiohttp import web
 
-from .sensor import EcoWittSensor, SENSOR_MAP
-from .station import extract_station, EcoWittStation
 from .calc import weather_datapoints
+from .sensor import SENSOR_MAP, EcoWittSensor
+from .station import EcoWittStation, extract_station
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 _LOGGER = logging.getLogger(__name__)
 _ECOWITT_LISTEN_PORT = 49199
@@ -19,7 +22,9 @@ _ECOWITT_LISTEN_PORT = 49199
 class EcoWittListener:
     """EcoWitt Server API server."""
 
-    def __init__(self, port: int = _ECOWITT_LISTEN_PORT, path: str = None):
+    def __init__(
+        self, port: int = _ECOWITT_LISTEN_PORT, path: str | None = None
+    ) -> None:
         """Initialize EcoWitt Server."""
         # API Constants
         self.port: int = port
@@ -40,7 +45,7 @@ class EcoWittListener:
         self.stations: dict[str, EcoWittStation] = {}
 
     def _new_sensor_cb(self, sensor: EcoWittSensor) -> None:
-        """Internal new sensor callback
+        """Internal new sensor callback.
 
         binds to self.new_sensor_cb
         """
@@ -63,7 +68,7 @@ class EcoWittListener:
         last_update = time.time()
         last_update_m = time.monotonic()
 
-        for datapoint in weather_data.keys():
+        for datapoint in weather_data:
             sensor_id = f"{station.key}.{datapoint}"
             sensor = self.sensors.get(sensor_id)
             if sensor is None:
@@ -85,12 +90,12 @@ class EcoWittListener:
                 self.sensors[sensor_id] = sensor
                 try:
                     self._new_sensor_cb(sensor)
-                except Exception as err:  # pylint: disable=broad-except
+                except Exception as err:  # pylint: disable=broad-except # noqa: BLE001
                     _LOGGER.warning("EcoWitt new sensor callback error: %s", err)
 
             try:
                 sensor.update_value(weather_data[datapoint], last_update, last_update_m)
-            except Exception as err:  # pylint: disable=broad-except
+            except Exception as err:  # pylint: disable=broad-except # noqa: BLE001
                 _LOGGER.warning("Sensor update error: %s", err)
 
     async def handler(self, request: web.BaseRequest) -> web.Response:
@@ -110,7 +115,6 @@ class EcoWittListener:
 
     async def start(self) -> None:
         """Listen and process."""
-
         self.server = web.Server(self.handler)
         self.runner = web.ServerRunner(self.server)
         await self.runner.setup()

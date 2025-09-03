@@ -1,12 +1,12 @@
-"""Test for stations from station.py"""
+"""Test for stations from station.py."""
 
 from aioecowitt import station
 
 from .const import EASYWEATHER_DATA, GW2000A_DATA
 
 
-def test_gw2000a_v2():
-    """Test Calculated values from GW2000A_V2"""
+def test_gw2000a_v2() -> None:
+    """Test Calculated values from GW2000A_V2."""
     ecowitt_station = station.extract_station(GW2000A_DATA)
 
     assert "PASSKEY" not in GW2000A_DATA
@@ -22,7 +22,7 @@ def test_gw2000a_v2():
     assert ecowitt_station.frequence == "868M"
 
 
-def test_easyweather():
+def test_easyweather() -> None:
     """Test EasyWeather station."""
     ecowitt_station = station.extract_station(EASYWEATHER_DATA)
 
