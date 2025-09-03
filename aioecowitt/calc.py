@@ -18,7 +18,7 @@ _KM_2_MI = 0.6213712
 _INHG_2_HPA = 33.86
 
 
-def convert_fahrenheit_to_celius(
+def convert_fahrenheit_to_celsius(
     data: dict[str, str | int | float | dt.datetime | None],
     key_source: str,
     key_destination: str,
@@ -28,7 +28,7 @@ def convert_fahrenheit_to_celius(
         data[key_destination] = round(meteocalc.Temp(data[key_source], "F").c, 1)
 
 
-def _convert_inches_into_mm(
+def _convert_inches_to_mm(
     data: dict[str, str | int | float | dt.datetime | None],
     key_source: str,
     key_destination: str,
@@ -80,7 +80,7 @@ def weather_datapoints(  # noqa: C901, PLR0912
         ("tf_ch7", "tf_ch7c"),
         ("tf_ch8", "tf_ch8c"),
     ):
-        convert_fahrenheit_to_celius(data, source, dst)
+        convert_fahrenheit_to_celsius(data, source, dst)
 
     # speeds
     for source, dst in (
@@ -102,7 +102,7 @@ def weather_datapoints(  # noqa: C901, PLR0912
         "totalrain",
         "rainrate",
     ):
-        _convert_inches_into_mm(data, key + "in", key + "mm")
+        _convert_inches_to_mm(data, f"{key}in", f"{key}mm")
 
     for key in (
         "erain_piezo",
@@ -113,12 +113,12 @@ def weather_datapoints(  # noqa: C901, PLR0912
         "yrain_piezo",
         "rrain_piezo",
     ):
-        _convert_inches_into_mm(data, key, key + "mm")
+        _convert_inches_to_mm(data, key, f"{key}mm")
 
     # Pressure
     for key in ("baromrel", "baromabs"):
-        if value := data.get(key + "in"):
-            data[key + "hpa"] = round(value * _INHG_2_HPA, 1)
+        if value := data.get(f"{key}in"):
+            data[f"{key}hpa"] = round(value * _INHG_2_HPA, 1)
 
     # Wind chill
     if "tempf" in data and "windspeedmph" in data:
