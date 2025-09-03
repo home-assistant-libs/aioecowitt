@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import enum
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 if TYPE_CHECKING:
-    import datetime as dt
     from collections.abc import Callable
 
     from .station import EcoWittStation
@@ -46,42 +46,60 @@ class EcoWittSensor:
             callback()
 
 
-class EcoWittSensorTypes(enum.Enum):
+def _convert_timestamp(value: str) -> dt.datetime:
+    return dt.datetime.fromtimestamp(int(value), dt.UTC)
+
+
+@enum.unique
+class EcoWittSensorTypes(enum.IntEnum):
     """EcoWitt sensor types."""
 
-    INTERNAL = 1
-    PRESSURE_HPA = 2
-    PRESSURE_INHG = 3
-    RAIN_COUNT_MM = 4
-    RAIN_COUNT_INCHES = 5
-    RAIN_RATE_MM = 6
-    RAIN_RATE_INCHES = 7
-    HUMIDITY = 8
-    DEGREE = 9
-    SPEED_KPH = 10
-    SPEED_MPH = 11
-    TEMPERATURE_C = 12
-    TEMPERATURE_F = 13
-    WATT_METERS_SQUARED = 14
-    UV_INDEX = 15
-    PM25 = 16
-    PM10 = 17
-    TIMESTAMP = 18
-    LIGHTNING_COUNT = 19
-    LIGHTNING_DISTANCE_KM = 20
-    LIGHTNING_DISTANCE_MILES = 21
-    LEAK = 22
-    VOLTAGE = 23
-    BATTERY_BINARY = 24
-    BATTERY_VOLTAGE = 25
-    BATTERY_PERCENTAGE = 26
-    CO2_PPM = 27
-    LUX = 28
-    PERCENTAGE = 29
-    SOIL_RAWADC = 30
-    RAIN_STATE = 31
-    SOIL_MOISTURE = 32
-    VPD_INHG = 33
+    convert_fn: Callable[[str], str | int | float | dt.datetime]
+
+    def __new__(
+        cls,
+        value: int,
+        convert_fn: Callable[[str], str | int | float | dt.datetime],
+    ) -> Self:
+        """Create new EcoWittSensorTypes."""
+        obj = int.__new__(cls, value)
+        obj._value_ = value
+        obj.convert_fn = convert_fn
+        return obj
+
+    INTERNAL = 1, lambda x: x
+    PRESSURE_HPA = 2, lambda x: x  # HA should convert
+    PRESSURE_INHG = 3, float
+    RAIN_COUNT_MM = 4, lambda x: x  # HA should convert
+    RAIN_COUNT_INCHES = 5, float
+    RAIN_RATE_MM = 6, lambda x: x  # HA should convert
+    RAIN_RATE_INCHES = 7, float
+    HUMIDITY = 8, int
+    DEGREE = 9, int
+    SPEED_KPH = 10, lambda x: x  # HA should convert
+    SPEED_MPH = 11, float
+    TEMPERATURE_C = 12, lambda x: x  # HA should convert
+    TEMPERATURE_F = 13, float
+    WATT_METERS_SQUARED = 14, float
+    UV_INDEX = 15, int
+    PM25 = 16, float
+    PM10 = 17, float
+    TIMESTAMP = 18, _convert_timestamp
+    LIGHTNING_COUNT = 19, int
+    LIGHTNING_DISTANCE_KM = 20, int
+    LIGHTNING_DISTANCE_MILES = 21, lambda x: x  # HA should convert
+    LEAK = 22, int
+    VOLTAGE = 23, float
+    BATTERY_BINARY = 24, float
+    BATTERY_VOLTAGE = 25, float
+    BATTERY_PERCENTAGE = 26, lambda x: int(x) * 20
+    CO2_PPM = 27, int
+    LUX = 28, lambda x: x  # HA should convert
+    PERCENTAGE = 29, int
+    SOIL_RAWADC = 30, lambda x: x  # Keep it as it comes in
+    RAIN_STATE = 31, int
+    SOIL_MOISTURE = 32, int
+    VPD_INHG = 33, float
 
 
 @dataclass
