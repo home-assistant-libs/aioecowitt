@@ -100,6 +100,8 @@ class EcoWittSensorTypes(enum.IntEnum):
     RAIN_STATE = 31, int
     SOIL_MOISTURE = 32, int
     VPD_INHG = 33, float
+    PM1 = 34, float
+    PM4 = 35, float
 
 
 @dataclass
@@ -302,6 +304,10 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "tf_co2": EcoWittMapping("WH45 Temperature", EcoWittSensorTypes.TEMPERATURE_F),
     "tf_co2c": EcoWittMapping("WH45 Temperature", EcoWittSensorTypes.TEMPERATURE_C),
     "humi_co2": EcoWittMapping("WH45 Humidity", EcoWittSensorTypes.HUMIDITY),
+    "pm1_co2": EcoWittMapping("WH46 PM1 CO2", EcoWittSensorTypes.PM1),
+    "pm1_24h_co2": EcoWittMapping("WH46 PM1 CO2 24h average", EcoWittSensorTypes.PM1),
+    "pm4_co2": EcoWittMapping("WH46 PM4 CO2", EcoWittSensorTypes.PM4),
+    "pm4_24h_co2": EcoWittMapping("WH46 PM4 CO2 24h average", EcoWittSensorTypes.PM4),
     "pm25_co2": EcoWittMapping("WH45 PM2.5 CO2", EcoWittSensorTypes.PM25),
     "pm25_24h_co2": EcoWittMapping(
         "WH45 PM2.5 CO2 24h average", EcoWittSensorTypes.PM25
