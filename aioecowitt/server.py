@@ -105,6 +105,7 @@ class EcoWittListener:
         if self.path is not None and request.path != self.path:
             return web.Response(status=404)
         data = await request.post()
+        _LOGGER.debug("Received data: %s", data)
 
         # data is not a dict, it's a MultiDict
         self.last_values[data["PASSKEY"]] = data.copy()
