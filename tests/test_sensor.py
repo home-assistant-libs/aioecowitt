@@ -1,9 +1,14 @@
 """Test ecowitt sensor module."""
 
 from typing import Any
+
 import pytest
-from .const import GW2000A_V3_DATA
+from pytest_aiohttp import AiohttpClient
+
 from aioecowitt.sensor import EcoWittSensor, EcoWittSensorTypes
+from aioecowitt.server import EcoWittListener
+
+from .const import GW2000A_V3_DATA
 
 
 def test_update_listener() -> None:
@@ -40,8 +45,8 @@ def test_update_listener() -> None:
     ],
 )
 async def test_sensor(
-    ecowitt_server,
-    ecowitt_http,
+    ecowitt_server: EcoWittListener,
+    ecowitt_http: AiohttpClient,
     sensor_key: str,
     expected_value: Any,
     request_data: dict[str, Any],
