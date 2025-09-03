@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5.0.0
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: 3.13
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install -r requirements_tests.txt
+      - name: Execute tests
+        run: |
+          pytest --timeout=10 tests
+
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5.0.0
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: 3.13
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install -r requirements_tests.txt
+      - name: Run pre-commit checks
+        run: SKIP=no-commit-to-branch pre-commit run --all-files

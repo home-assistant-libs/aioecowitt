@@ -1,0 +1,70 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=77.0"]
+
+[project]
+name = "aioecowitt"
+version = "0.0.0"
+license = "Apache-2.0"
+description = "Python wrapper for EcoWitt Protocol"
+readme = "README.md"
+authors = [{ name = "Home Assistant Team", email = "hello@home-assistant.io" }]
+requires-python = ">=3.13"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Home Automation",
+]
+dependencies = [
+  "aiohttp>3",
+  "meteocalc>=1.1.0",
+]
+
+[project.urls]
+"Source code" = "https://github.com/home-assistant-libs/aioecowitt"
+
+[project.scripts]
+ecowitt-testserver = "aioecowitt.__main__:main"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode = "auto"
+
+[tool.setuptools.packages.find]
+include = ["aioecowitt*"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+ignore = [
+    "ANN401", # Opinioated warning on disallowing dynamically typed expressions
+    "D203",   # Conflicts with other rules
+    "D213",   # Conflicts with other rules
+    "EM101",  # raw-string-in-exception
+
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in `__init__`
+
+    "FBT", # flake8-boolean-trap
+
+    "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable
+
+    # Conflicts with the Ruff formatter
+    "COM812",
+
+    "TRY003", # raise-vanilla-args: Avoid specifying long messages outside the exception class
+    "T201", # print found,
+    "D401", # First line of docstring should be in imperative mood
+
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D100",    # Missing docstring in public module
+    "D103",    # Missing docstring in public function
+    "D104",    # Missing docstring in public package
+    "S101",    # Use of assert detected
+]
