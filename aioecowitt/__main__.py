@@ -23,9 +23,8 @@ async def run_server(ecowitt_ws: EcoWittListener) -> None:
     """Run server in endless mode."""
     event = asyncio.Event()
     await ecowitt_ws.start()
-    while True:
-        # use event to wait endless instead of sleep
-        await event.wait()
+    # use event to wait endless instead of sleep in a loop
+    await event.wait()
 
 
 def main() -> None:
