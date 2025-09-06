@@ -102,6 +102,8 @@ class EcoWittSensorTypes(enum.IntEnum):
     VPD_INHG = 33, float
     PM1 = 34, float
     PM4 = 35, float
+    DISTANCE_MM = 36, int
+    HEAT_COUNT = 37, int
 
 
 @dataclass
@@ -488,6 +490,66 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "leaf_batt8": EcoWittMapping(
         "Leaf Wetness 8 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "depth_ch1": EcoWittMapping(
+        "Current Depth 1", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "depth_ch2": EcoWittMapping(
+        "Current Depth 2", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "depth_ch3": EcoWittMapping(
+        "Current Depth 3", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "depth_ch4": EcoWittMapping(
+        "Current Depth 4", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "thi_ch1": EcoWittMapping(
+        "Total Historical Depth Index 1", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "thi_ch2": EcoWittMapping(
+        "Total Historical Depth Index 2", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "thi_ch3": EcoWittMapping(
+        "Total Historical Depth Index 3", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "thi_ch4": EcoWittMapping(
+        "Total Historical Depth Index 4", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "air_ch1": EcoWittMapping(
+        "Air Gap 1", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "air_ch2": EcoWittMapping(
+        "Air Gap 2", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "air_ch3": EcoWittMapping(
+        "Air Gap 3", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "air_ch4": EcoWittMapping(
+        "Air Gap 4", EcoWittSensorTypes.DISTANCE_MM
+    ),
+    "ldsbatt1": EcoWittMapping(
+        "LDS 1 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsbatt2": EcoWittMapping(
+        "LDS 2 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsbatt3": EcoWittMapping(
+        "LDS 3 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsbatt4": EcoWittMapping(
+        "LDS 4 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "ldsheat_ch1": EcoWittMapping(
+        "Heater-on Counter 1", EcoWittSensorTypes.HEAT_COUNT
+    ),
+    "ldsheat_ch2": EcoWittMapping(
+        "Heater-on Counter 2", EcoWittSensorTypes.HEAT_COUNT
+    ),
+    "ldsheat_ch3": EcoWittMapping(
+        "Heater-on Counter 3", EcoWittSensorTypes.HEAT_COUNT
+    ),
+    "ldsheat_ch4": EcoWittMapping(
+        "Heater-on Counter 4", EcoWittSensorTypes.HEAT_COUNT
     ),
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
