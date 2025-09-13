@@ -131,7 +131,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "yearlyrainin": EcoWittMapping("Yearly Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES),
     "last24hrainin": EcoWittMapping(
-        "24h Rain", EcoWittSensorTypes.RAIN_COUNT_MM
+        "24h Rain", EcoWittSensorTypes.RAIN_COUNT_INCHES
     ),
     "rainratemm": EcoWittMapping("Rain Rate", EcoWittSensorTypes.RAIN_RATE_MM),
     "eventrainmm": EcoWittMapping("Event Rain", EcoWittSensorTypes.RAIN_COUNT_MM),
