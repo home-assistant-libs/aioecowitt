@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict, fields
 from enum import Enum
-from typing import Any
+from typing import Any, TypeVar, Type
 
-from mashumaro import DataClassDictMixin
+T = TypeVar('T', bound='BaseModel')
 
 
 class WittiotDataTypes(Enum):
@@ -26,7 +26,23 @@ class WittiotDataTypes(Enum):
 
 
 @dataclass
-class DeviceInfo(DataClassDictMixin):
+class BaseModel:
+    """Base model with dict conversion methods."""
+    
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return asdict(self)
+    
+    @classmethod
+    def from_dict(cls: Type[T], data: dict[str, Any]) -> T:
+        """Create instance from dictionary."""
+        field_names = {f.name for f in fields(cls)}
+        filtered_data = {k: v for k, v in data.items() if k in field_names}
+        return cls(**filtered_data)
+
+
+@dataclass
+class DeviceInfo(BaseModel):
     """Device information."""
 
     version: str
@@ -35,7 +51,7 @@ class DeviceInfo(DataClassDictMixin):
 
 
 @dataclass
-class SensorInfo(DataClassDictMixin):
+class SensorInfo(BaseModel):
     """Sensor information."""
 
     dev_type: str
@@ -44,7 +60,7 @@ class SensorInfo(DataClassDictMixin):
 
 
 @dataclass
-class IoTDevice(DataClassDictMixin):
+class IoTDevice(BaseModel):
     """IoT device data."""
 
     id: int
@@ -63,7 +79,7 @@ class IoTDevice(DataClassDictMixin):
 
 
 @dataclass
-class WeatherData(DataClassDictMixin):
+class WeatherData(BaseModel):
     """Weather station data grouped by device."""
 
     # Main console data
@@ -141,7 +157,7 @@ class WeatherData(DataClassDictMixin):
 
 
 @dataclass
-class ChannelSensors(DataClassDictMixin):
+class ChannelSensors(BaseModel):
     """Channel-based sensors (PM2.5, leak, temp/humidity, soil, etc.)."""
 
     # PM2.5 channels
@@ -240,7 +256,7 @@ class ChannelSensors(DataClassDictMixin):
 
 
 @dataclass
-class SensorDiagnostics(DataClassDictMixin):
+class SensorDiagnostics(BaseModel):
     """Sensor diagnostic data (battery, RSSI, signal)."""
 
     # Battery levels for various sensor types
@@ -299,7 +315,7 @@ class SensorDiagnostics(DataClassDictMixin):
 
 
 @dataclass
-class EcoWittDeviceData(DataClassDictMixin):
+class EcoWittDeviceData(BaseModel):
     """Complete device data grouped for Home Assistant integration."""
 
     device_info: DeviceInfo

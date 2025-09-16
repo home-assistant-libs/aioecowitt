@@ -20,7 +20,6 @@ classifiers = [
 ]
 dependencies = [
   "aiohttp>3",
-  "mashumaro>=3.0",
   "meteocalc>=1.1.0",
 ]
 

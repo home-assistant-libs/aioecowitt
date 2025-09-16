@@ -195,3 +195,11 @@ class TestEcoWittApi:
         assert hasattr(data, "sensor_diagnostics") 
         assert hasattr(data, "iot_devices")
         assert isinstance(data.iot_devices, list)
+        
+        # Test data model methods
+        device_dict = data.device_info.to_dict()
+        assert device_dict["version"] == "V1.7.0"
+        
+        # Test from_dict creation
+        new_device = DeviceInfo.from_dict(device_dict)
+        assert new_device.version == "V1.7.0"
