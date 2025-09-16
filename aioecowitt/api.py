@@ -82,9 +82,8 @@ class EcoWittApi:
     ) -> dict[str, Any]:
         """Make a GET request to the API."""
         url = f"http://{self._host}/{endpoint}"
-        use_session = self._session and not self._session.closed
-
-        if use_session:
+        
+        if self._session:
             session = self._session
         else:
             session = ClientSession(timeout=ClientTimeout(total=self._timeout))
@@ -104,7 +103,7 @@ class EcoWittApi:
                 return {}
             raise RequestError(f"Error requesting data from {url}: {err}") from err
         finally:
-            if not use_session:
+            if not self._session:
                 await session.close()
 
     async def _post_request(
@@ -115,9 +114,8 @@ class EcoWittApi:
     ) -> dict[str, Any]:
         """Make a POST request to the API."""
         url = f"http://{self._host}/{endpoint}"
-        use_session = self._session and not self._session.closed
-
-        if use_session:
+        
+        if self._session:
             session = self._session
         else:
             session = ClientSession(timeout=ClientTimeout(total=self._timeout))
@@ -139,110 +137,42 @@ class EcoWittApi:
             _LOGGER.error(error_msg)
             raise RequestError(error_msg) from err
         finally:
-            if not use_session:
+            if not self._session:
                 await session.close()
 
     @staticmethod
-    def _is_valid_float(val: Any) -> bool:
-        """Check if value can be converted to float."""
+    def _safe_float(value: Any) -> float | None:
+        """Safely convert value to float."""
+        if value is None or value == "" or value == "--" or value == "--.-":
+            return None
         try:
-            float(val)
-            return True
+            # Remove common units and suffixes
+            if isinstance(value, str):
+                cleaned = (value.replace("%", "").replace("°", "").replace("V", "")
+                          .replace("hPa", "").replace("inHg", "").replace("mmHg", "")
+                          .replace("mm", "").replace("in", "").replace("mph", "")
+                          .replace("m/s", "").replace("km/h", "").replace("W/m2", ""))
+                if cleaned.strip() == "" or cleaned.strip() in ("--", "--.-", "---.-"):
+                    return None
+                return float(cleaned)
+            return float(value)
         except (ValueError, TypeError):
-            return False
+            return None
 
-    def _convert_temperature(self, val: str | None, unit: str) -> str | None:
-        """Convert temperature based on unit."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        if not self._is_valid_float(val):
-            return ""
-        
-        val_float = float(val)
-        if unit == "0":  # Convert to Fahrenheit
-            return str(round(val_float * 1.8 + 32.0, 1))
-        return val
-
-    def _convert_pressure(self, val: str | None, unit: str) -> str | None:
-        """Convert pressure based on unit."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        cleaned = val.replace("hPa", "").replace("inHg", "").replace("mmHg", "")
-        if not self._is_valid_float(cleaned):
-            return ""
-        
-        val_float = float(cleaned)
-        if unit == "0":
-            return str(round(val_float / 33.86388, 2))
-        elif unit == "1":
-            return cleaned
-        else:
-            return str(round(val_float * 1.33322 / 33.86388, 1))
-
-    def _convert_rain(self, val: str | None, unit: str) -> str | None:
-        """Convert rain measurement based on unit."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        cleaned = val.replace("in", "").replace("mm", "").replace("/Hr", "")
-        if not self._is_valid_float(cleaned):
-            return ""
-        
-        val_float = float(cleaned)
-        if unit == "0":
-            return str(round(val_float / 25.4, 2))
-        return cleaned
-
-    def _convert_wind_speed(self, val: str | None, unit: str) -> str | None:
-        """Convert wind speed based on unit."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        cleaned = (val.replace("m/s", "").replace("km/h", "")
-                  .replace("knots", "").replace("mph", "")
-                  .replace("BFT", "").replace("ft/s", ""))
-        
-        if not self._is_valid_float(cleaned):
-            return ""
-        
-        val_float = float(cleaned)
-        if unit == "0":
-            return str(round(val_float * 2.236936, 2))
-        elif unit == "1":
-            return str(round(val_float * 0.621371, 2))
-        elif unit == "3":
-            return str(round(val_float * 1.15078, 2))
-        elif unit == "5":
-            # Beaufort scale conversion
-            bft_to_min_speed = {
-                0: 0.0, 1: 1.0, 2: 4.0, 3: 8.0, 4: 13.0, 5: 19.0,
-                6: 24.0, 7: 31.0, 8: 39.0, 9: 47.0, 10: 55.0, 11: 63.0, 12: 74.0
-            }
-            return str(bft_to_min_speed.get(int(val_float), val_float))
-        return cleaned
-
-    def _convert_battery(self, val: str | None, unit: str, battery_type: str) -> str | None:
-        """Convert battery level based on type."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        if battery_type == "binary":
-            if val == "0":
-                return "Normal"
-            else:
-                return "Low"
-        
-        if unit and unit != "":
-            return f"{val} {unit}"
-        
-        if self._is_valid_float(val):
-            val_int = int(float(val))
-            if 1 <= val_int <= 5:
-                return f"{val_int * 20}%"
-            elif val_int == 6:
-                return "DC"
-        return ""
+    @staticmethod
+    def _safe_int(value: Any) -> int | None:
+        """Safely convert value to int."""
+        if value is None or value == "" or value == "--" or value == "--.-":
+            return None
+        try:
+            if isinstance(value, str):
+                cleaned = value.replace("°", "").strip()
+                if cleaned == "" or cleaned in ("--", "--.-", "---.-"):
+                    return None
+                return int(float(cleaned))
+            return int(value)
+        except (ValueError, TypeError):
+            return None
 
     def _extract_iot_device_data(self, response: dict[str, Any], rfnet_state: int) -> dict[str, Any] | None:
         """Extract IoT device data from response."""
@@ -260,37 +190,36 @@ class EcoWittApi:
         
         if iot_type and iot_type in WFC_MAP:
             wfc_fields = WFC_MAP[iot_type]
-            result["rssi"] = device_data.get(wfc_fields[0], "")
+            result["rssi"] = self._safe_int(device_data.get(wfc_fields[0], ""))
             
             if is_wfc and len(wfc_fields) > 4:
                 battery = device_data.get(wfc_fields[4], "")
-                result["iotbatt"] = self._convert_battery(battery, "", "1")
+                result["iotbatt"] = battery  # Keep as string for now
             
             result["iot_running"] = device_data.get(RUN_MAP.get(iot_type, ""), "")
-            result["run_time"] = device_data.get("run_time", 0)
+            result["run_time"] = self._safe_int(device_data.get("run_time", 0))
             
             if iot_type in FORMAT_DATA_MAP:
                 format_fields = FORMAT_DATA_MAP[iot_type]
                 if len(format_fields) > 2:
-                    result[format_fields[2]] = device_data.get(format_fields[2], "")
+                    result[format_fields[2]] = self._safe_float(device_data.get(format_fields[2], ""))
                 
                 # Calculate total
                 if len(format_fields) > 1:
-                    happen = float(device_data.get(format_fields[0], 0))
-                    total = float(device_data.get(format_fields[1], 0))
+                    happen = self._safe_float(device_data.get(format_fields[0], 0)) or 0
+                    total = self._safe_float(device_data.get(format_fields[1], 0)) or 0
                     result["velocity_total" if is_wfc else "elect_total"] = total - happen
                 
                 # Temperature data for water devices
                 if is_wfc and len(format_fields) > 4 and format_fields[4] in device_data:
-                    temp_val = device_data[format_fields[4]]
-                    result["data_water_t"] = self._convert_temperature(temp_val, self._unit_temp)
+                    result["data_water_t"] = self._safe_float(device_data[format_fields[4]])
                 
                 # AC voltage for electric devices
                 if not is_wfc and len(format_fields) > 4 and format_fields[4] in device_data:
-                    result["data_ac_v"] = device_data[format_fields[4]]
+                    result["data_ac_v"] = self._safe_float(device_data[format_fields[4]])
         
-        # Remove empty values
-        return {k: v for k, v in result.items() if v not in ("", "--", "---", None, [])}
+        # Remove None values
+        return {k: v for k, v in result.items() if v is not None}
 
     async def get_device_info(self) -> DeviceInfo:
         """Get device information."""
@@ -316,27 +245,10 @@ class EcoWittApi:
         sensor_data_2 = await self._request(GW11268_API_SENID_2)
         iot_list = await self._request(GW11268_API_IOTINFO)
         
-        # Update internal unit preferences
-        self._unit_temp = unit_data.get("temperature", "0")
-        unit_press = unit_data.get("pressure", "0")
-        unit_wind = unit_data.get("wind", "0")
-        unit_rain = unit_data.get("rain", "0")
-        unit_light = unit_data.get("light", "0")
-        
-        # Parse weather data
-        weather_data = self._parse_weather_data(live_data, unit_press, unit_wind, unit_rain, unit_light)
-        weather_data.ver = device_info.version
-        weather_data.devname = device_info.dev_name
-        weather_data.mac = device_info.mac
-        weather_data.iot_list = iot_list
-        
-        # Parse channel sensors
+        # Parse data directly into structured models
+        weather_data = self._parse_weather_data(live_data, device_info)
         channel_sensors = self._parse_channel_sensors(live_data)
-        
-        # Parse sensor diagnostics
-        sensor_diagnostics = self._parse_sensor_diagnostics(sensor_data_1, sensor_data_2, channel_sensors)
-        
-        # Parse IoT devices
+        sensor_diagnostics = self._parse_sensor_diagnostics(sensor_data_1, sensor_data_2)
         iot_devices = await self._parse_iot_devices(iot_list)
         
         return EcoWittDeviceData(
@@ -350,23 +262,25 @@ class EcoWittApi:
     def _parse_weather_data(
         self,
         live_data: dict[str, Any],
-        unit_press: str,
-        unit_wind: str,
-        unit_rain: str,
-        unit_light: str,
+        device_info: DeviceInfo,
     ) -> WeatherData:
         """Parse weather data from live data response."""
         weather = WeatherData()
         
+        # Set device info
+        weather.ver = device_info.version
+        weather.devname = device_info.dev_name
+        weather.mac = device_info.mac
+        
         # Parse WH25 (indoor) data
         if "wh25" in live_data and live_data["wh25"]:
             wh25_data = live_data["wh25"][0]
-            weather.tempinf = self._convert_temperature(wh25_data.get("intemp"), self._unit_temp)
-            weather.humidityin = wh25_data.get("inhumi", "").replace("%", "")
-            weather.baromrelin = self._convert_pressure(wh25_data.get("rel"), unit_press)
-            weather.baromabsin = self._convert_pressure(wh25_data.get("abs"), unit_press)
-            weather.co2in = wh25_data.get("CO2")
-            weather.co2in_24h = wh25_data.get("CO2_24H")
+            weather.tempinf = self._safe_float(wh25_data.get("intemp"))
+            weather.humidityin = self._safe_float(wh25_data.get("inhumi"))
+            weather.baromrelin = self._safe_float(wh25_data.get("rel"))
+            weather.baromabsin = self._safe_float(wh25_data.get("abs"))
+            weather.co2in = self._safe_int(wh25_data.get("CO2"))
+            weather.co2in_24h = self._safe_int(wh25_data.get("CO2_24H"))
         
         # Parse common outdoor sensors
         if "common_list" in live_data:
@@ -375,31 +289,31 @@ class EcoWittApi:
                 value = item.get("val")
                 
                 if sensor_id == "0x02":
-                    weather.tempf = self._convert_temperature(value, self._unit_temp)
+                    weather.tempf = self._safe_float(value)
                 elif sensor_id == "0x07":
-                    weather.humidity = value.replace("%", "") if value else None
+                    weather.humidity = self._safe_float(value)
                 elif sensor_id == "0x03":
-                    weather.dewpoint = self._convert_temperature(value, self._unit_temp)
+                    weather.dewpoint = self._safe_float(value)
                 elif sensor_id == "0x0A":
-                    weather.winddir = value
+                    weather.winddir = self._safe_int(value)
                 elif sensor_id == "0x0B":
-                    weather.windspeedmph = self._convert_wind_speed(value, unit_wind)
+                    weather.windspeedmph = self._safe_float(value)
                 elif sensor_id == "0x0C":
-                    weather.windgustmph = self._convert_wind_speed(value, unit_wind)
+                    weather.windgustmph = self._safe_float(value)
                 elif sensor_id == "0x15":
-                    weather.solarradiation = self._convert_solar_radiation(value, unit_light)
+                    weather.solarradiation = self._safe_float(value)
                 elif sensor_id == "0x17":
-                    weather.uv = value
+                    weather.uv = self._safe_float(value)
                 elif sensor_id == "0x19":
-                    weather.daywindmax = self._convert_wind_speed(value, unit_wind)
+                    weather.daywindmax = self._safe_float(value)
                 elif sensor_id == "3":
-                    weather.feellike = self._convert_temperature(value, self._unit_temp)
+                    weather.feellike = self._safe_float(value)
                 elif sensor_id == "0x6D":
-                    weather.winddir10 = value
+                    weather.winddir10 = self._safe_int(value)
                 elif sensor_id == "4":
-                    weather.apparent = self._convert_temperature(value, self._unit_temp)
+                    weather.apparent = self._safe_float(value)
                 elif sensor_id == "5":
-                    weather.vpd = self._convert_pressure(value, unit_press)
+                    weather.vpd = self._safe_float(value)
         
         # Parse rain data
         if "rain" in live_data:
@@ -408,21 +322,21 @@ class EcoWittApi:
                 value = item.get("val")
                 
                 if sensor_id == "0x0D":
-                    weather.eventrainin = self._convert_rain(value, unit_rain)
+                    weather.eventrainin = self._safe_float(value)
                 elif sensor_id == "0x0E":
-                    weather.rainratein = self._convert_rain(value, unit_rain)
+                    weather.rainratein = self._safe_float(value)
                 elif sensor_id == "0x10":
-                    weather.dailyrainin = self._convert_rain(value, unit_rain)
+                    weather.dailyrainin = self._safe_float(value)
                 elif sensor_id == "0x11":
-                    weather.weeklyrainin = self._convert_rain(value, unit_rain)
+                    weather.weeklyrainin = self._safe_float(value)
                 elif sensor_id == "0x12":
-                    weather.monthlyrainin = self._convert_rain(value, unit_rain)
+                    weather.monthlyrainin = self._safe_float(value)
                 elif sensor_id == "0x13":
-                    weather.yearlyrainin = self._convert_rain(value, unit_rain)
+                    weather.yearlyrainin = self._safe_float(value)
                 elif sensor_id == "0x14":
-                    weather.totalrainin = self._convert_rain(value, unit_rain)
+                    weather.totalrainin = self._safe_float(value)
                 elif sensor_id == "0x7C":
-                    weather.h24rainin = self._convert_rain(value, unit_rain)
+                    weather.h24rainin = self._safe_float(value)
         
         # Parse piezo rain data
         if "piezoRain" in live_data:
@@ -431,52 +345,52 @@ class EcoWittApi:
                 value = item.get("val")
                 
                 if sensor_id == "0x0D":
-                    weather.erain_piezo = self._convert_rain(value, unit_rain)
+                    weather.erain_piezo = self._safe_float(value)
                 elif sensor_id == "0x0E":
-                    weather.rrain_piezo = self._convert_rain(value, unit_rain)
+                    weather.rrain_piezo = self._safe_float(value)
                 elif sensor_id == "0x10":
-                    weather.drain_piezo = self._convert_rain(value, unit_rain)
+                    weather.drain_piezo = self._safe_float(value)
                 elif sensor_id == "0x11":
-                    weather.wrain_piezo = self._convert_rain(value, unit_rain)
+                    weather.wrain_piezo = self._safe_float(value)
                 elif sensor_id == "0x12":
-                    weather.mrain_piezo = self._convert_rain(value, unit_rain)
+                    weather.mrain_piezo = self._safe_float(value)
                 elif sensor_id == "0x13":
-                    weather.yrain_piezo = self._convert_rain(value, unit_rain)
-                    weather.piezora_batt = self._convert_battery(item.get("battery", "--"), "", "1")
+                    weather.yrain_piezo = self._safe_float(value)
+                    weather.piezora_batt = self._safe_int(item.get("battery"))
                 elif sensor_id == "0x14":
-                    weather.train_piezo = self._convert_rain(value, unit_rain)
+                    weather.train_piezo = self._safe_float(value)
                 elif sensor_id == "0x7C":
-                    weather.h24rain_piezo = self._convert_rain(value, unit_rain)
+                    weather.h24rain_piezo = self._safe_float(value)
                 elif sensor_id == "srain_piezo":
-                    weather.srain_piezo = "Raining" if value and value != "0" else "No rain"
+                    weather.srain_piezo = "Raining" if value and str(value) != "0" else "No rain"
         
         # Parse console data
         if "console" in live_data and live_data["console"]:
             console_data = live_data["console"][0]
-            weather.con_batt = self._convert_battery(console_data.get("battery", "--"), "", "1")
-            weather.con_batt_volt = console_data.get("console_batt_volt", "--")
-            weather.con_ext_volt = console_data.get("console_ext_volt", "--")
+            weather.con_batt = self._safe_int(console_data.get("battery"))
+            weather.con_batt_volt = self._safe_float(console_data.get("console_batt_volt"))
+            weather.con_ext_volt = self._safe_float(console_data.get("console_ext_volt"))
         
         # Parse CO2 data
         if "co2" in live_data and live_data["co2"]:
             co2_data = live_data["co2"][0]
-            weather.co2 = co2_data.get("CO2")
-            weather.co2_24h = co2_data.get("CO2_24H")
-            weather.pm25_co2 = co2_data.get("PM25")
-            weather.pm25_24h_co2 = co2_data.get("PM25_24H")
-            weather.pm10_co2 = co2_data.get("PM10")
-            weather.pm10_24h_co2 = co2_data.get("PM10_24H")
-            weather.pm10_aqi_co2 = co2_data.get("PM10_RealAQI")
-            weather.pm25_aqi_co2 = co2_data.get("PM25_RealAQI")
-            weather.tf_co2 = self._convert_temperature(co2_data.get("temp"), self._unit_temp)
-            weather.humi_co2 = co2_data.get("humidity", "").replace("%", "") if co2_data.get("humidity") else None
+            weather.co2 = self._safe_int(co2_data.get("CO2"))
+            weather.co2_24h = self._safe_int(co2_data.get("CO2_24H"))
+            weather.pm25_co2 = self._safe_float(co2_data.get("PM25"))
+            weather.pm25_24h_co2 = self._safe_float(co2_data.get("PM25_24H"))
+            weather.pm10_co2 = self._safe_float(co2_data.get("PM10"))
+            weather.pm10_24h_co2 = self._safe_float(co2_data.get("PM10_24H"))
+            weather.pm10_aqi_co2 = self._safe_int(co2_data.get("PM10_RealAQI"))
+            weather.pm25_aqi_co2 = self._safe_int(co2_data.get("PM25_RealAQI"))
+            weather.tf_co2 = self._safe_float(co2_data.get("temp"))
+            weather.humi_co2 = self._safe_float(co2_data.get("humidity"))
         
         # Parse lightning data
         if "lightning" in live_data and live_data["lightning"]:
             lightning_data = live_data["lightning"][0]
-            weather.lightning = self._convert_lightning_distance(lightning_data.get("distance"), unit_wind)
+            weather.lightning = self._safe_float(lightning_data.get("distance"))
             weather.lightning_time = lightning_data.get("timestamp")
-            weather.lightning_num = lightning_data.get("count")
+            weather.lightning_num = self._safe_int(lightning_data.get("count"))
         
         return weather
 
@@ -521,21 +435,21 @@ class EcoWittApi:
             for item in live_data["ch_pm25"]:
                 channel = item.get("channel")
                 if channel == "1":
-                    sensors.pm25_ch1 = item.get("PM25")
-                    sensors.pm25_24h_ch1 = item.get("PM25_24H", "--")
-                    sensors.pm25_aqi_ch1 = item.get("PM25_RealAQI")
+                    sensors.pm25_ch1 = self._safe_float(item.get("PM25"))
+                    sensors.pm25_24h_ch1 = self._safe_float(item.get("PM25_24H"))
+                    sensors.pm25_aqi_ch1 = self._safe_int(item.get("PM25_RealAQI"))
                 elif channel == "2":
-                    sensors.pm25_ch2 = item.get("PM25")
-                    sensors.pm25_24h_ch2 = item.get("PM25_24H", "--")
-                    sensors.pm25_aqi_ch2 = item.get("PM25_RealAQI")
+                    sensors.pm25_ch2 = self._safe_float(item.get("PM25"))
+                    sensors.pm25_24h_ch2 = self._safe_float(item.get("PM25_24H"))
+                    sensors.pm25_aqi_ch2 = self._safe_int(item.get("PM25_RealAQI"))
                 elif channel == "3":
-                    sensors.pm25_ch3 = item.get("PM25")
-                    sensors.pm25_24h_ch3 = item.get("PM25_24H", "--")
-                    sensors.pm25_aqi_ch3 = item.get("PM25_RealAQI")
+                    sensors.pm25_ch3 = self._safe_float(item.get("PM25"))
+                    sensors.pm25_24h_ch3 = self._safe_float(item.get("PM25_24H"))
+                    sensors.pm25_aqi_ch3 = self._safe_int(item.get("PM25_RealAQI"))
                 elif channel == "4":
-                    sensors.pm25_ch4 = item.get("PM25")
-                    sensors.pm25_24h_ch4 = item.get("PM25_24H", "--")
-                    sensors.pm25_aqi_ch4 = item.get("PM25_RealAQI")
+                    sensors.pm25_ch4 = self._safe_float(item.get("PM25"))
+                    sensors.pm25_24h_ch4 = self._safe_float(item.get("PM25_24H"))
+                    sensors.pm25_aqi_ch4 = self._safe_int(item.get("PM25_RealAQI"))
         
         # Parse leak sensors
         if "ch_leak" in live_data:
@@ -555,8 +469,8 @@ class EcoWittApi:
         if "ch_aisle" in live_data:
             for item in live_data["ch_aisle"]:
                 channel = int(item.get("channel", 0))
-                temp = self._convert_temperature(item.get("temp"), self._unit_temp)
-                humidity = item.get("humidity", "").replace("%", "") if item.get("humidity") else None
+                temp = self._safe_float(item.get("temp"))
+                humidity = self._safe_float(item.get("humidity"))
                 
                 if channel == 1:
                     sensors.temp_ch1 = temp
@@ -587,7 +501,7 @@ class EcoWittApi:
         if "ch_soil" in live_data:
             for item in live_data["ch_soil"]:
                 channel = int(item.get("channel", 0))
-                humidity = item.get("humidity", "").replace("%", "") if item.get("humidity") else None
+                humidity = self._safe_float(item.get("humidity"))
                 
                 if channel == 1:
                     sensors.soilmoisture_ch1 = humidity
@@ -626,7 +540,7 @@ class EcoWittApi:
         if "ch_temp" in live_data:
             for item in live_data["ch_temp"]:
                 channel = int(item.get("channel", 0))
-                temp = self._convert_temperature(item.get("temp"), self._unit_temp)
+                temp = self._safe_float(item.get("temp"))
                 
                 if channel == 1:
                     sensors.tf_ch1 = temp
@@ -649,7 +563,7 @@ class EcoWittApi:
         if "ch_leaf" in live_data:
             for item in live_data["ch_leaf"]:
                 channel = int(item.get("channel", 0))
-                humidity = item.get("humidity", "").replace("%", "") if item.get("humidity") else None
+                humidity = self._safe_float(item.get("humidity"))
                 
                 if channel == 1:
                     sensors.leaf_ch1 = humidity
@@ -672,10 +586,10 @@ class EcoWittApi:
         if "ch_lds" in live_data:
             for item in live_data["ch_lds"]:
                 channel = int(item.get("channel", 0))
-                air = self._convert_distance(item.get("air"), "rain")
-                depth = self._convert_distance(item.get("depth"), "rain")
-                heat = item.get("total_heat", "--")
-                height = self._convert_distance(item.get("total_height", "--"), "rain")
+                air = self._safe_float(item.get("air"))
+                depth = self._safe_float(item.get("depth"))
+                heat = self._safe_int(item.get("total_heat"))
+                height = self._safe_float(item.get("total_height"))
                 
                 if channel == 1:
                     sensors.lds_air_ch1 = air
@@ -718,7 +632,6 @@ class EcoWittApi:
         self,
         sensor_data_1: dict[str, Any],
         sensor_data_2: dict[str, Any],
-        channel_sensors: ChannelSensors,
     ) -> SensorDiagnostics:
         """Parse sensor diagnostic data."""
         diagnostics = SensorDiagnostics()
@@ -747,20 +660,10 @@ class EcoWittApi:
                 if sensor.get("id") in ("FFFFFFFF", "FFFFFFFE"):
                     continue
                 
-                # Set battery
-                battery = sensor.get("batt", "--")
-                if sensor_type in (22, 23, 24, 25, 27, 28, 29, 30):  # PM25 and leak sensors
-                    setattr(diagnostics, f"{base_name}_batt", self._convert_battery(battery, "", "1"))
-                elif sensor_type in (4, 5, 0):  # Binary battery sensors
-                    setattr(diagnostics, f"{base_name}_batt", self._convert_battery(battery, "", "binary"))
-                else:
-                    setattr(diagnostics, f"{base_name}_batt", self._convert_battery(battery, "", "1"))
-                
-                # Set RSSI and signal
-                rssi = sensor.get("rssi", "--")
-                signal = sensor.get("signal", "--")
-                setattr(diagnostics, f"{base_name}_rssi", rssi)
-                setattr(diagnostics, f"{base_name}_signal", signal)
+                # Set battery, RSSI, and signal
+                setattr(diagnostics, f"{base_name}_batt", self._safe_int(sensor.get("batt")))
+                setattr(diagnostics, f"{base_name}_rssi", self._safe_int(sensor.get("rssi")))
+                setattr(diagnostics, f"{base_name}_signal", self._safe_int(sensor.get("signal")))
         
         return diagnostics
 

@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict, fields
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, TypeVar, Type
+from typing import Any
 
-T = TypeVar('T', bound='BaseModel')
+from mashumaro import DataClassDictMixin
 
 
 class WittiotDataTypes(Enum):
@@ -26,23 +26,7 @@ class WittiotDataTypes(Enum):
 
 
 @dataclass
-class BaseModel:
-    """Base model with dict conversion methods."""
-    
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
-        return asdict(self)
-    
-    @classmethod
-    def from_dict(cls: Type[T], data: dict[str, Any]) -> T:
-        """Create instance from dictionary."""
-        field_names = {f.name for f in fields(cls)}
-        filtered_data = {k: v for k, v in data.items() if k in field_names}
-        return cls(**filtered_data)
-
-
-@dataclass
-class DeviceInfo(BaseModel):
+class DeviceInfo(DataClassDictMixin):
     """Device information."""
 
     version: str
@@ -51,7 +35,7 @@ class DeviceInfo(BaseModel):
 
 
 @dataclass
-class SensorInfo(BaseModel):
+class SensorInfo(DataClassDictMixin):
     """Sensor information."""
 
     dev_type: str
@@ -60,92 +44,92 @@ class SensorInfo(BaseModel):
 
 
 @dataclass
-class IoTDevice(BaseModel):
+class IoTDevice(DataClassDictMixin):
     """IoT device data."""
 
     id: int
     model: int
     nickname: str
     rfnet_state: int
-    rssi: str | None = None
+    rssi: int | None = None
     iotbatt: str | None = None
     iot_running: str | None = None
     run_time: int | None = None
     velocity_total: float | None = None
     elect_total: float | None = None
-    data_water_t: str | None = None
-    data_ac_v: str | None = None
+    data_water_t: float | None = None
+    data_ac_v: float | None = None
     wfc02_position: int | None = None
 
 
 @dataclass
-class WeatherData(BaseModel):
+class WeatherData(DataClassDictMixin):
     """Weather station data grouped by device."""
 
     # Main console data
-    tempinf: str | None = None
-    humidityin: str | None = None
-    baromrelin: str | None = None
-    baromabsin: str | None = None
-    tempf: str | None = None
-    humidity: str | None = None
-    winddir: str | None = None
-    winddir10: str | None = None
-    apparent: str | None = None
-    vpd: str | None = None
-    windspeedmph: str | None = None
-    windgustmph: str | None = None
-    solarradiation: str | None = None
-    uv: str | None = None
-    daywindmax: str | None = None
-    feellike: str | None = None
-    dewpoint: str | None = None
+    tempinf: float | None = None
+    humidityin: float | None = None
+    baromrelin: float | None = None
+    baromabsin: float | None = None
+    tempf: float | None = None
+    humidity: float | None = None
+    winddir: int | None = None
+    winddir10: int | None = None
+    apparent: float | None = None
+    vpd: float | None = None
+    windspeedmph: float | None = None
+    windgustmph: float | None = None
+    solarradiation: float | None = None
+    uv: float | None = None
+    daywindmax: float | None = None
+    feellike: float | None = None
+    dewpoint: float | None = None
 
     # Rain data
-    rainratein: str | None = None
-    eventrainin: str | None = None
-    dailyrainin: str | None = None
-    weeklyrainin: str | None = None
-    monthlyrainin: str | None = None
-    yearlyrainin: str | None = None
-    totalrainin: str | None = None
-    h24rainin: str | None = None
+    rainratein: float | None = None
+    eventrainin: float | None = None
+    dailyrainin: float | None = None
+    weeklyrainin: float | None = None
+    monthlyrainin: float | None = None
+    yearlyrainin: float | None = None
+    totalrainin: float | None = None
+    h24rainin: float | None = None
 
     # Piezo rain data
-    rrain_piezo: str | None = None
-    erain_piezo: str | None = None
-    drain_piezo: str | None = None
-    wrain_piezo: str | None = None
-    mrain_piezo: str | None = None
-    yrain_piezo: str | None = None
-    train_piezo: str | None = None
-    h24rain_piezo: str | None = None
+    rrain_piezo: float | None = None
+    erain_piezo: float | None = None
+    drain_piezo: float | None = None
+    wrain_piezo: float | None = None
+    mrain_piezo: float | None = None
+    yrain_piezo: float | None = None
+    train_piezo: float | None = None
+    h24rain_piezo: float | None = None
     srain_piezo: str | None = None
-    piezora_batt: str | None = None
+    piezora_batt: int | None = None
 
     # Console battery
-    con_batt: str | None = None
-    con_batt_volt: str | None = None
-    con_ext_volt: str | None = None
+    con_batt: int | None = None
+    con_batt_volt: float | None = None
+    con_ext_volt: float | None = None
 
     # CO2 sensors
-    co2in: str | None = None
-    co2in_24h: str | None = None
-    co2: str | None = None
-    co2_24h: str | None = None
-    pm25_co2: str | None = None
-    pm25_24h_co2: str | None = None
-    pm10_co2: str | None = None
-    pm10_24h_co2: str | None = None
-    pm10_aqi_co2: str | None = None
-    pm25_aqi_co2: str | None = None
-    tf_co2: str | None = None
-    humi_co2: str | None = None
+    co2in: int | None = None
+    co2in_24h: int | None = None
+    co2: int | None = None
+    co2_24h: int | None = None
+    pm25_co2: float | None = None
+    pm25_24h_co2: float | None = None
+    pm10_co2: float | None = None
+    pm10_24h_co2: float | None = None
+    pm10_aqi_co2: int | None = None
+    pm25_aqi_co2: int | None = None
+    tf_co2: float | None = None
+    humi_co2: float | None = None
 
     # Lightning
-    lightning: str | None = None
+    lightning: float | None = None
     lightning_time: str | None = None
-    lightning_num: str | None = None
+    lightning_num: int | None = None
 
     # Device information
     ver: str | None = None
@@ -157,22 +141,22 @@ class WeatherData(BaseModel):
 
 
 @dataclass
-class ChannelSensors(BaseModel):
+class ChannelSensors(DataClassDictMixin):
     """Channel-based sensors (PM2.5, leak, temp/humidity, soil, etc.)."""
 
     # PM2.5 channels
-    pm25_ch1: str | None = None
-    pm25_ch2: str | None = None
-    pm25_ch3: str | None = None
-    pm25_ch4: str | None = None
-    pm25_24h_ch1: str | None = None
-    pm25_24h_ch2: str | None = None
-    pm25_24h_ch3: str | None = None
-    pm25_24h_ch4: str | None = None
-    pm25_aqi_ch1: str | None = None
-    pm25_aqi_ch2: str | None = None
-    pm25_aqi_ch3: str | None = None
-    pm25_aqi_ch4: str | None = None
+    pm25_ch1: float | None = None
+    pm25_ch2: float | None = None
+    pm25_ch3: float | None = None
+    pm25_ch4: float | None = None
+    pm25_24h_ch1: float | None = None
+    pm25_24h_ch2: float | None = None
+    pm25_24h_ch3: float | None = None
+    pm25_24h_ch4: float | None = None
+    pm25_aqi_ch1: int | None = None
+    pm25_aqi_ch2: int | None = None
+    pm25_aqi_ch3: int | None = None
+    pm25_aqi_ch4: int | None = None
 
     # Leak sensors
     leak_ch1: str | None = None
@@ -181,141 +165,141 @@ class ChannelSensors(BaseModel):
     leak_ch4: str | None = None
 
     # Temperature & Humidity channels (1-8)
-    temp_ch1: str | None = None
-    temp_ch2: str | None = None
-    temp_ch3: str | None = None
-    temp_ch4: str | None = None
-    temp_ch5: str | None = None
-    temp_ch6: str | None = None
-    temp_ch7: str | None = None
-    temp_ch8: str | None = None
-    humidity_ch1: str | None = None
-    humidity_ch2: str | None = None
-    humidity_ch3: str | None = None
-    humidity_ch4: str | None = None
-    humidity_ch5: str | None = None
-    humidity_ch6: str | None = None
-    humidity_ch7: str | None = None
-    humidity_ch8: str | None = None
+    temp_ch1: float | None = None
+    temp_ch2: float | None = None
+    temp_ch3: float | None = None
+    temp_ch4: float | None = None
+    temp_ch5: float | None = None
+    temp_ch6: float | None = None
+    temp_ch7: float | None = None
+    temp_ch8: float | None = None
+    humidity_ch1: float | None = None
+    humidity_ch2: float | None = None
+    humidity_ch3: float | None = None
+    humidity_ch4: float | None = None
+    humidity_ch5: float | None = None
+    humidity_ch6: float | None = None
+    humidity_ch7: float | None = None
+    humidity_ch8: float | None = None
 
     # Soil moisture (1-16)
-    soilmoisture_ch1: str | None = None
-    soilmoisture_ch2: str | None = None
-    soilmoisture_ch3: str | None = None
-    soilmoisture_ch4: str | None = None
-    soilmoisture_ch5: str | None = None
-    soilmoisture_ch6: str | None = None
-    soilmoisture_ch7: str | None = None
-    soilmoisture_ch8: str | None = None
-    soilmoisture_ch9: str | None = None
-    soilmoisture_ch10: str | None = None
-    soilmoisture_ch11: str | None = None
-    soilmoisture_ch12: str | None = None
-    soilmoisture_ch13: str | None = None
-    soilmoisture_ch14: str | None = None
-    soilmoisture_ch15: str | None = None
-    soilmoisture_ch16: str | None = None
+    soilmoisture_ch1: float | None = None
+    soilmoisture_ch2: float | None = None
+    soilmoisture_ch3: float | None = None
+    soilmoisture_ch4: float | None = None
+    soilmoisture_ch5: float | None = None
+    soilmoisture_ch6: float | None = None
+    soilmoisture_ch7: float | None = None
+    soilmoisture_ch8: float | None = None
+    soilmoisture_ch9: float | None = None
+    soilmoisture_ch10: float | None = None
+    soilmoisture_ch11: float | None = None
+    soilmoisture_ch12: float | None = None
+    soilmoisture_ch13: float | None = None
+    soilmoisture_ch14: float | None = None
+    soilmoisture_ch15: float | None = None
+    soilmoisture_ch16: float | None = None
 
     # Temperature only channels (1-8)
-    tf_ch1: str | None = None
-    tf_ch2: str | None = None
-    tf_ch3: str | None = None
-    tf_ch4: str | None = None
-    tf_ch5: str | None = None
-    tf_ch6: str | None = None
-    tf_ch7: str | None = None
-    tf_ch8: str | None = None
+    tf_ch1: float | None = None
+    tf_ch2: float | None = None
+    tf_ch3: float | None = None
+    tf_ch4: float | None = None
+    tf_ch5: float | None = None
+    tf_ch6: float | None = None
+    tf_ch7: float | None = None
+    tf_ch8: float | None = None
 
     # Leaf wetness (1-8)
-    leaf_ch1: str | None = None
-    leaf_ch2: str | None = None
-    leaf_ch3: str | None = None
-    leaf_ch4: str | None = None
-    leaf_ch5: str | None = None
-    leaf_ch6: str | None = None
-    leaf_ch7: str | None = None
-    leaf_ch8: str | None = None
+    leaf_ch1: float | None = None
+    leaf_ch2: float | None = None
+    leaf_ch3: float | None = None
+    leaf_ch4: float | None = None
+    leaf_ch5: float | None = None
+    leaf_ch6: float | None = None
+    leaf_ch7: float | None = None
+    leaf_ch8: float | None = None
 
     # LDS sensors (1-4)
-    lds_air_ch1: str | None = None
-    lds_air_ch2: str | None = None
-    lds_air_ch3: str | None = None
-    lds_air_ch4: str | None = None
-    lds_depth_ch1: str | None = None
-    lds_depth_ch2: str | None = None
-    lds_depth_ch3: str | None = None
-    lds_depth_ch4: str | None = None
-    lds_heat_ch1: str | None = None
-    lds_heat_ch2: str | None = None
-    lds_heat_ch3: str | None = None
-    lds_heat_ch4: str | None = None
-    lds_height_ch1: str | None = None
-    lds_height_ch2: str | None = None
-    lds_height_ch3: str | None = None
-    lds_height_ch4: str | None = None
+    lds_air_ch1: float | None = None
+    lds_air_ch2: float | None = None
+    lds_air_ch3: float | None = None
+    lds_air_ch4: float | None = None
+    lds_depth_ch1: float | None = None
+    lds_depth_ch2: float | None = None
+    lds_depth_ch3: float | None = None
+    lds_depth_ch4: float | None = None
+    lds_heat_ch1: int | None = None
+    lds_heat_ch2: int | None = None
+    lds_heat_ch3: int | None = None
+    lds_heat_ch4: int | None = None
+    lds_height_ch1: float | None = None
+    lds_height_ch2: float | None = None
+    lds_height_ch3: float | None = None
+    lds_height_ch4: float | None = None
 
 
 @dataclass
-class SensorDiagnostics(BaseModel):
+class SensorDiagnostics(DataClassDictMixin):
     """Sensor diagnostic data (battery, RSSI, signal)."""
 
     # Battery levels for various sensor types
-    pm25_ch1_batt: str | None = None
-    pm25_ch2_batt: str | None = None
-    pm25_ch3_batt: str | None = None
-    pm25_ch4_batt: str | None = None
-    leak_ch1_batt: str | None = None
-    leak_ch2_batt: str | None = None
-    leak_ch3_batt: str | None = None
-    leak_ch4_batt: str | None = None
+    pm25_ch1_batt: int | None = None
+    pm25_ch2_batt: int | None = None
+    pm25_ch3_batt: int | None = None
+    pm25_ch4_batt: int | None = None
+    leak_ch1_batt: int | None = None
+    leak_ch2_batt: int | None = None
+    leak_ch3_batt: int | None = None
+    leak_ch4_batt: int | None = None
 
     # Device batteries (WH series)
-    wh85_batt: str | None = None
-    wh90_batt: str | None = None
-    wh69_batt: str | None = None
-    wh68_batt: str | None = None
-    wh40_batt: str | None = None
-    wh25_batt: str | None = None
-    wh26_batt: str | None = None
-    wh80_batt: str | None = None
-    wh57_batt: str | None = None
-    wh45_batt: str | None = None
+    wh85_batt: int | None = None
+    wh90_batt: int | None = None
+    wh69_batt: int | None = None
+    wh68_batt: int | None = None
+    wh40_batt: int | None = None
+    wh25_batt: int | None = None
+    wh26_batt: int | None = None
+    wh80_batt: int | None = None
+    wh57_batt: int | None = None
+    wh45_batt: int | None = None
 
     # RSSI values
-    pm25_ch1_rssi: str | None = None
-    pm25_ch2_rssi: str | None = None
-    pm25_ch3_rssi: str | None = None
-    pm25_ch4_rssi: str | None = None
-    wh85_rssi: str | None = None
-    wh90_rssi: str | None = None
-    wh69_rssi: str | None = None
-    wh68_rssi: str | None = None
-    wh40_rssi: str | None = None
-    wh25_rssi: str | None = None
-    wh26_rssi: str | None = None
-    wh80_rssi: str | None = None
-    wh57_rssi: str | None = None
-    wh45_rssi: str | None = None
+    pm25_ch1_rssi: int | None = None
+    pm25_ch2_rssi: int | None = None
+    pm25_ch3_rssi: int | None = None
+    pm25_ch4_rssi: int | None = None
+    wh85_rssi: int | None = None
+    wh90_rssi: int | None = None
+    wh69_rssi: int | None = None
+    wh68_rssi: int | None = None
+    wh40_rssi: int | None = None
+    wh25_rssi: int | None = None
+    wh26_rssi: int | None = None
+    wh80_rssi: int | None = None
+    wh57_rssi: int | None = None
+    wh45_rssi: int | None = None
 
     # Signal strength
-    pm25_ch1_signal: str | None = None
-    pm25_ch2_signal: str | None = None
-    pm25_ch3_signal: str | None = None
-    pm25_ch4_signal: str | None = None
-    wh85_signal: str | None = None
-    wh90_signal: str | None = None
-    wh69_signal: str | None = None
-    wh68_signal: str | None = None
-    wh40_signal: str | None = None
-    wh25_signal: str | None = None
-    wh26_signal: str | None = None
-    wh80_signal: str | None = None
-    wh57_signal: str | None = None
-    wh45_signal: str | None = None
+    pm25_ch1_signal: int | None = None
+    pm25_ch2_signal: int | None = None
+    pm25_ch3_signal: int | None = None
+    pm25_ch4_signal: int | None = None
+    wh85_signal: int | None = None
+    wh90_signal: int | None = None
+    wh69_signal: int | None = None
+    wh68_signal: int | None = None
+    wh40_signal: int | None = None
+    wh25_signal: int | None = None
+    wh26_signal: int | None = None
+    wh80_signal: int | None = None
+    wh57_signal: int | None = None
+    wh45_signal: int | None = None
 
 
 @dataclass
-class EcoWittDeviceData(BaseModel):
+class EcoWittDeviceData(DataClassDictMixin):
     """Complete device data grouped for Home Assistant integration."""
 
     device_info: DeviceInfo

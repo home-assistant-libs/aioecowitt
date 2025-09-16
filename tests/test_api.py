@@ -83,54 +83,19 @@ class TestEcoWittApi:
         assert device_info.mac == "AA:BB:CC:DD:EE:FF"
 
     @pytest.mark.asyncio
-    async def test_temperature_conversion(self, api):
-        """Test temperature conversion methods."""
-        # Test Celsius to Fahrenheit
-        result = api._convert_temperature("20.0", "0")
-        assert result == "68.0"
+    async def test_safe_conversions(self, api):
+        """Test safe conversion methods."""
+        # Test safe_float
+        assert api._safe_float("20.5") == 20.5
+        assert api._safe_float("20.5°C") == 20.5
+        assert api._safe_float("--") is None
+        assert api._safe_float("invalid") is None
         
-        # Test Celsius (no conversion)
-        result = api._convert_temperature("20.0", "1")
-        assert result == "20.0"
-        
-        # Test empty value
-        result = api._convert_temperature("--", "0")
-        assert result == "--"
-        
-        # Test invalid value
-        result = api._convert_temperature("invalid", "0")
-        assert result == ""
-
-    @pytest.mark.asyncio
-    async def test_battery_conversion(self, api):
-        """Test battery level conversion."""
-        # Test percentage conversion
-        result = api._convert_battery("3", "", "1")
-        assert result == "60%"
-        
-        # Test DC value
-        result = api._convert_battery("6", "", "1")
-        assert result == "DC"
-        
-        # Test binary battery
-        result = api._convert_battery("0", "", "binary")
-        assert result == "Normal"
-        
-        result = api._convert_battery("1", "", "binary")
-        assert result == "Low"
-        
-        # Test empty value
-        result = api._convert_battery("--", "", "1")
-        assert result == "--"
-
-    @pytest.mark.asyncio
-    async def test_is_valid_float(self, api):
-        """Test float validation."""
-        assert api._is_valid_float("20.5") is True
-        assert api._is_valid_float("20") is True
-        assert api._is_valid_float("invalid") is False
-        assert api._is_valid_float(None) is False
-        assert api._is_valid_float("") is False
+        # Test safe_int
+        assert api._safe_int("20") == 20
+        assert api._safe_int("20.5") == 20
+        assert api._safe_int("--") is None
+        assert api._safe_int("invalid") is None
 
     @pytest.mark.asyncio
     async def test_get_all_data_structure(self, api):
@@ -184,11 +149,11 @@ class TestEcoWittApi:
         assert data.device_info.dev_name == "Test Station"
         assert data.device_info.mac == "AA:BB:CC:DD:EE:FF"
         
-        # Check that weather data structure is populated
-        assert data.weather_data.tempinf == "22.0"
-        assert data.weather_data.humidityin == "45"
-        assert data.weather_data.tempf == "25.0"
-        assert data.weather_data.humidity == "60"
+        # Check that weather data structure is populated with proper types
+        assert data.weather_data.tempinf == 22.0
+        assert data.weather_data.humidityin == 45.0
+        assert data.weather_data.tempf == 25.0
+        assert data.weather_data.humidity == 60.0
         
         # Check that all required data structures exist
         assert hasattr(data, "channel_sensors")
@@ -196,7 +161,7 @@ class TestEcoWittApi:
         assert hasattr(data, "iot_devices")
         assert isinstance(data.iot_devices, list)
         
-        # Test data model methods
+        # Test mashumaro functionality
         device_dict = data.device_info.to_dict()
         assert device_dict["version"] == "V1.7.0"
         
