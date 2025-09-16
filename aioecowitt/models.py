@@ -25,6 +25,76 @@ class WittiotDataTypes(Enum):
     RSSI = 11
 
 
+class TemperatureUnit(Enum):
+    """Temperature units."""
+
+    CELSIUS = "C"
+    FAHRENHEIT = "F"
+
+
+class PressureUnit(Enum):
+    """Pressure units."""
+
+    HPA = "hPa"
+    INHG = "inHg"
+    MMHG = "mmHg"
+    KPA = "kPa"
+
+
+class DistanceUnit(Enum):
+    """Distance units."""
+
+    MM = "mm"
+    IN = "in"
+    FT = "ft"
+    M = "m"
+
+
+class SpeedUnit(Enum):
+    """Speed units."""
+
+    MS = "m/s"
+    MPH = "mph"
+    KMH = "km/h"
+    KNOTS = "knots"
+    FTS = "ft/s"
+
+
+class RainRateUnit(Enum):
+    """Rain rate units."""
+
+    MM_HR = "mm/Hr"
+    IN_HR = "in/Hr"
+
+
+class PowerUnit(Enum):
+    """Power units."""
+
+    WM2 = "W/m2"
+    KFC = "Kfc"
+    KLUX = "Klux"
+
+
+class PercentageUnit(Enum):
+    """Percentage units."""
+
+    PERCENT = "%"
+
+
+class VoltageUnit(Enum):
+    """Voltage units."""
+
+    V = "V"
+
+
+@dataclass
+class SensorReading(DataClassDictMixin):
+    """A sensor reading with value and unit."""
+
+    value: float | int | str | None
+    unit: str | None = None
+
+
 @dataclass
 class DeviceInfo(DataClassDictMixin):
     """Device information."""
@@ -36,11 +106,17 @@ class DeviceInfo(DataClassDictMixin):
 
 @dataclass
 class SensorInfo(DataClassDictMixin):
-    """Sensor information."""
+    """Sensor information from sensor list."""
 
-    dev_type: str
+    img: str
+    type: int
     name: str
-    data_type: WittiotDataTypes
+    id: str
+    batt: int | None = None
+    rssi: int | None = None
+    signal: int | None = None
+    version: str | None = None
+    idst: str | None = None
 
 
 @dataclass
@@ -63,247 +139,194 @@ class IoTDevice(DataClassDictMixin):
 
 
 @dataclass
-class WeatherData(DataClassDictMixin):
-    """Weather station data grouped by device."""
+class CommonSensor(DataClassDictMixin):
+    """Common sensor data."""
 
-    # Main console data
-    tempinf: float | None = None
-    humidityin: float | None = None
-    baromrelin: float | None = None
-    baromabsin: float | None = None
-    tempf: float | None = None
-    humidity: float | None = None
-    winddir: int | None = None
-    winddir10: int | None = None
-    apparent: float | None = None
-    vpd: float | None = None
-    windspeedmph: float | None = None
-    windgustmph: float | None = None
-    solarradiation: float | None = None
-    uv: float | None = None
-    daywindmax: float | None = None
-    feellike: float | None = None
-    dewpoint: float | None = None
-
-    # Rain data
-    rainratein: float | None = None
-    eventrainin: float | None = None
-    dailyrainin: float | None = None
-    weeklyrainin: float | None = None
-    monthlyrainin: float | None = None
-    yearlyrainin: float | None = None
-    totalrainin: float | None = None
-    h24rainin: float | None = None
-
-    # Piezo rain data
-    rrain_piezo: float | None = None
-    erain_piezo: float | None = None
-    drain_piezo: float | None = None
-    wrain_piezo: float | None = None
-    mrain_piezo: float | None = None
-    yrain_piezo: float | None = None
-    train_piezo: float | None = None
-    h24rain_piezo: float | None = None
-    srain_piezo: str | None = None
-    piezora_batt: int | None = None
-
-    # Console battery
-    con_batt: int | None = None
-    con_batt_volt: float | None = None
-    con_ext_volt: float | None = None
-
-    # CO2 sensors
-    co2in: int | None = None
-    co2in_24h: int | None = None
-    co2: int | None = None
-    co2_24h: int | None = None
-    pm25_co2: float | None = None
-    pm25_24h_co2: float | None = None
-    pm10_co2: float | None = None
-    pm10_24h_co2: float | None = None
-    pm10_aqi_co2: int | None = None
-    pm25_aqi_co2: int | None = None
-    tf_co2: float | None = None
-    humi_co2: float | None = None
-
-    # Lightning
-    lightning: float | None = None
-    lightning_time: str | None = None
-    lightning_num: int | None = None
-
-    # Device information
-    ver: str | None = None
-    devname: str | None = None
-    mac: str | None = None
-
-    # IoT devices
-    iot_list: dict[str, Any] | None = None
+    id: str
+    val: str
+    unit: str | None = None
 
 
 @dataclass
-class ChannelSensors(DataClassDictMixin):
-    """Channel-based sensors (PM2.5, leak, temp/humidity, soil, etc.)."""
+class RainSensor(DataClassDictMixin):
+    """Rain sensor data."""
 
-    # PM2.5 channels
-    pm25_ch1: float | None = None
-    pm25_ch2: float | None = None
-    pm25_ch3: float | None = None
-    pm25_ch4: float | None = None
-    pm25_24h_ch1: float | None = None
-    pm25_24h_ch2: float | None = None
-    pm25_24h_ch3: float | None = None
-    pm25_24h_ch4: float | None = None
-    pm25_aqi_ch1: int | None = None
-    pm25_aqi_ch2: int | None = None
-    pm25_aqi_ch3: int | None = None
-    pm25_aqi_ch4: int | None = None
-
-    # Leak sensors
-    leak_ch1: str | None = None
-    leak_ch2: str | None = None
-    leak_ch3: str | None = None
-    leak_ch4: str | None = None
-
-    # Temperature & Humidity channels (1-8)
-    temp_ch1: float | None = None
-    temp_ch2: float | None = None
-    temp_ch3: float | None = None
-    temp_ch4: float | None = None
-    temp_ch5: float | None = None
-    temp_ch6: float | None = None
-    temp_ch7: float | None = None
-    temp_ch8: float | None = None
-    humidity_ch1: float | None = None
-    humidity_ch2: float | None = None
-    humidity_ch3: float | None = None
-    humidity_ch4: float | None = None
-    humidity_ch5: float | None = None
-    humidity_ch6: float | None = None
-    humidity_ch7: float | None = None
-    humidity_ch8: float | None = None
-
-    # Soil moisture (1-16)
-    soilmoisture_ch1: float | None = None
-    soilmoisture_ch2: float | None = None
-    soilmoisture_ch3: float | None = None
-    soilmoisture_ch4: float | None = None
-    soilmoisture_ch5: float | None = None
-    soilmoisture_ch6: float | None = None
-    soilmoisture_ch7: float | None = None
-    soilmoisture_ch8: float | None = None
-    soilmoisture_ch9: float | None = None
-    soilmoisture_ch10: float | None = None
-    soilmoisture_ch11: float | None = None
-    soilmoisture_ch12: float | None = None
-    soilmoisture_ch13: float | None = None
-    soilmoisture_ch14: float | None = None
-    soilmoisture_ch15: float | None = None
-    soilmoisture_ch16: float | None = None
-
-    # Temperature only channels (1-8)
-    tf_ch1: float | None = None
-    tf_ch2: float | None = None
-    tf_ch3: float | None = None
-    tf_ch4: float | None = None
-    tf_ch5: float | None = None
-    tf_ch6: float | None = None
-    tf_ch7: float | None = None
-    tf_ch8: float | None = None
-
-    # Leaf wetness (1-8)
-    leaf_ch1: float | None = None
-    leaf_ch2: float | None = None
-    leaf_ch3: float | None = None
-    leaf_ch4: float | None = None
-    leaf_ch5: float | None = None
-    leaf_ch6: float | None = None
-    leaf_ch7: float | None = None
-    leaf_ch8: float | None = None
-
-    # LDS sensors (1-4)
-    lds_air_ch1: float | None = None
-    lds_air_ch2: float | None = None
-    lds_air_ch3: float | None = None
-    lds_air_ch4: float | None = None
-    lds_depth_ch1: float | None = None
-    lds_depth_ch2: float | None = None
-    lds_depth_ch3: float | None = None
-    lds_depth_ch4: float | None = None
-    lds_heat_ch1: int | None = None
-    lds_heat_ch2: int | None = None
-    lds_heat_ch3: int | None = None
-    lds_heat_ch4: int | None = None
-    lds_height_ch1: float | None = None
-    lds_height_ch2: float | None = None
-    lds_height_ch3: float | None = None
-    lds_height_ch4: float | None = None
+    id: str
+    val: str
+    unit: str | None = None
 
 
 @dataclass
-class SensorDiagnostics(DataClassDictMixin):
-    """Sensor diagnostic data (battery, RSSI, signal)."""
+class PiezoRainSensor(DataClassDictMixin):
+    """Piezo rain sensor data."""
 
-    # Battery levels for various sensor types
-    pm25_ch1_batt: int | None = None
-    pm25_ch2_batt: int | None = None
-    pm25_ch3_batt: int | None = None
-    pm25_ch4_batt: int | None = None
-    leak_ch1_batt: int | None = None
-    leak_ch2_batt: int | None = None
-    leak_ch3_batt: int | None = None
-    leak_ch4_batt: int | None = None
+    id: str
+    val: str
+    unit: str | None = None
+    battery: str | None = None
+    voltage: str | None = None
+    ws90cap_volt: str | None = None
+    ws90_ver: str | None = None
 
-    # Device batteries (WH series)
-    wh85_batt: int | None = None
-    wh90_batt: int | None = None
-    wh69_batt: int | None = None
-    wh68_batt: int | None = None
-    wh40_batt: int | None = None
-    wh25_batt: int | None = None
-    wh26_batt: int | None = None
-    wh80_batt: int | None = None
-    wh57_batt: int | None = None
-    wh45_batt: int | None = None
 
-    # RSSI values
-    pm25_ch1_rssi: int | None = None
-    pm25_ch2_rssi: int | None = None
-    pm25_ch3_rssi: int | None = None
-    pm25_ch4_rssi: int | None = None
-    wh85_rssi: int | None = None
-    wh90_rssi: int | None = None
-    wh69_rssi: int | None = None
-    wh68_rssi: int | None = None
-    wh40_rssi: int | None = None
-    wh25_rssi: int | None = None
-    wh26_rssi: int | None = None
-    wh80_rssi: int | None = None
-    wh57_rssi: int | None = None
-    wh45_rssi: int | None = None
+@dataclass
+class WH25Data(DataClassDictMixin):
+    """WH25 indoor sensor data."""
 
-    # Signal strength
-    pm25_ch1_signal: int | None = None
-    pm25_ch2_signal: int | None = None
-    pm25_ch3_signal: int | None = None
-    pm25_ch4_signal: int | None = None
-    wh85_signal: int | None = None
-    wh90_signal: int | None = None
-    wh69_signal: int | None = None
-    wh68_signal: int | None = None
-    wh40_signal: int | None = None
-    wh25_signal: int | None = None
-    wh26_signal: int | None = None
-    wh80_signal: int | None = None
-    wh57_signal: int | None = None
-    wh45_signal: int | None = None
+    intemp: str
+    unit: str
+    inhumi: str
+    abs: str
+    rel: str
+    CO2: str | None = None
+    CO2_24H: str | None = None
+
+
+@dataclass
+class PM25Sensor(DataClassDictMixin):
+    """PM2.5 sensor data."""
+
+    channel: str
+    PM25: str | None = None
+    PM25_24H: str | None = None
+    PM25_RealAQI: str | None = None
+    battery: str | None = None
+    rssi: str | None = None
+    signal: str | None = None
+
+
+@dataclass
+class LeakSensor(DataClassDictMixin):
+    """Leak sensor data."""
+
+    channel: str
+    status: str
+    battery: str | None = None
+    rssi: str | None = None
+    signal: str | None = None
+
+
+@dataclass
+class TempHumiditySensor(DataClassDictMixin):
+    """Temperature and humidity sensor data."""
+
+    channel: str
+    temp: str | None = None
+    humidity: str | None = None
+    unit: str | None = None
+    battery: str | None = None
+    rssi: str | None = None
+    signal: str | None = None
+
+
+@dataclass
+class SoilSensor(DataClassDictMixin):
+    """Soil moisture sensor data."""
+
+    channel: str
+    humidity: str | None = None
+    unit: str | None = None
+    battery: str | None = None
+    rssi: str | None = None
+    signal: str | None = None
+
+
+@dataclass
+class TempSensor(DataClassDictMixin):
+    """Temperature-only sensor data."""
+
+    channel: str
+    temp: str | None = None
+    unit: str | None = None
+    battery: str | None = None
+    rssi: str | None = None
+    signal: str | None = None
+
+
+@dataclass
+class LeafSensor(DataClassDictMixin):
+    """Leaf wetness sensor data."""
+
+    channel: str
+    humidity: str | None = None
+    unit: str | None = None
+    battery: str | None = None
+    rssi: str | None = None
+    signal: str | None = None
+
+
+@dataclass
+class LDSSensor(DataClassDictMixin):
+    """LDS (Laser Distance Sensor) data."""
+
+    channel: str
+    name: str
+    unit: str
+    battery: str
+    voltage: str
+    air: str
+    depth: str
+    total_height: str
+    total_heat: str
+    device_id: str | None = None  # From sensor info
+
+
+@dataclass
+class ConsoleSensor(DataClassDictMixin):
+    """Console sensor data."""
+
+    battery: str
+    console_batt_volt: str | None = None
+    console_ext_volt: str | None = None
+
+
+@dataclass
+class CO2Sensor(DataClassDictMixin):
+    """CO2 sensor data."""
+
+    CO2: str | None = None
+    CO2_24H: str | None = None
+    PM25: str | None = None
+    PM25_24H: str | None = None
+    PM10: str | None = None
+    PM10_24H: str | None = None
+    PM10_RealAQI: str | None = None
+    PM25_RealAQI: str | None = None
+    temp: str | None = None
+    humidity: str | None = None
+    unit: str | None = None
+
+
+@dataclass
+class LightningSensor(DataClassDictMixin):
+    """Lightning sensor data."""
+
+    distance: str
+    timestamp: str | None = None
+    count: str | None = None
+    unit: str | None = None
 
 
 @dataclass
 class EcoWittDeviceData(DataClassDictMixin):
-    """Complete device data grouped for Home Assistant integration."""
+    """Complete device data keeping original structure."""
 
     device_info: DeviceInfo
-    weather_data: WeatherData
-    channel_sensors: ChannelSensors
-    sensor_diagnostics: SensorDiagnostics
+    sensors: list[SensorInfo]
     iot_devices: list[IoTDevice]
+    
+    # Keep original grouped structure - all optional with defaults
+    common_list: list[CommonSensor] | None = None
+    rain: list[RainSensor] | None = None
+    piezoRain: list[PiezoRainSensor] | None = None
+    wh25: list[WH25Data] | None = None
+    ch_pm25: list[PM25Sensor] | None = None
+    ch_leak: list[LeakSensor] | None = None
+    ch_aisle: list[TempHumiditySensor] | None = None
+    ch_soil: list[SoilSensor] | None = None
+    ch_temp: list[TempSensor] | None = None
+    ch_leaf: list[LeafSensor] | None = None
+    ch_lds: list[LDSSensor] | None = None
+    console: list[ConsoleSensor] | None = None
+    co2: list[CO2Sensor] | None = None
+    lightning: list[LightningSensor] | None = None

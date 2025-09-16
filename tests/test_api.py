@@ -83,14 +83,36 @@ class TestEcoWittApi:
         assert device_info.mac == "AA:BB:CC:DD:EE:FF"
 
     @pytest.mark.asyncio
+    async def test_parse_value_and_unit(self, api):
+        """Test value and unit parsing."""
+        # Test temperature with space
+        value, unit = api._parse_value_and_unit("20.7 C")
+        assert value == "20.7"
+        assert unit == "C"
+        
+        # Test percentage
+        value, unit = api._parse_value_and_unit("58%")
+        assert value == "58"
+        assert unit == "%"
+        
+        # Test rain rate
+        value, unit = api._parse_value_and_unit("0.0 mm/Hr")
+        assert value == "0.0"
+        assert unit == "mm/Hr"
+        
+        # Test pressure
+        value, unit = api._parse_value_and_unit("1013.2hPa")
+        assert value == "1013.2"
+        assert unit == "hPa"
+        
+        # Test empty/invalid
+        value, unit = api._parse_value_and_unit("--")
+        assert value == "--"
+        assert unit is None
+
+    @pytest.mark.asyncio
     async def test_safe_conversions(self, api):
         """Test safe conversion methods."""
-        # Test safe_float
-        assert api._safe_float("20.5") == 20.5
-        assert api._safe_float("20.5°C") == 20.5
-        assert api._safe_float("--") is None
-        assert api._safe_float("invalid") is None
-        
         # Test safe_int
         assert api._safe_int("20") == 20
         assert api._safe_int("20.5") == 20
@@ -106,32 +128,41 @@ class TestEcoWittApi:
             "get_device_info": {"apName": "Test Station"},
             "get_network_info": {"mac": "AA:BB:CC:DD:EE:FF"},
             "get_livedata_info": {
-                "wh25": [{"intemp": "22.0", "inhumi": "45%", "rel": "1013.2", "abs": "1013.2"}],
                 "common_list": [
-                    {"id": "0x02", "val": "25.0"},
-                    {"id": "0x07", "val": "60%"},
+                    {"id": "0x02", "val": "20.7 C"},
+                    {"id": "0x07", "val": "58%"},
                 ],
-                "rain": [],
-                "piezoRain": [],
-                "console": [{"battery": "3"}],
-                "co2": [],
-                "lightning": [],
-                "ch_pm25": [],
-                "ch_leak": [],
-                "ch_aisle": [],
-                "ch_soil": [],
-                "ch_temp": [],
-                "ch_leaf": [],
-                "ch_lds": [],
+                "wh25": [{"intemp": "22.0", "unit": "C", "inhumi": "45%", "rel": "1013.2 hPa", "abs": "1013.2 hPa"}],
+                "piezoRain": [
+                    {"id": "0x0D", "val": "0.0 mm"},
+                    {"id": "0x0E", "val": "0.0 mm/Hr"},
+                ],
+                "ch_lds": [
+                    {
+                        "channel": "1",
+                        "name": "",
+                        "unit": "mm", 
+                        "battery": "5",
+                        "voltage": "3.28",
+                        "air": "1565 mm",
+                        "depth": "--.-",
+                        "total_height": "0",
+                        "total_heat": "15"
+                    }
+                ]
             },
-            "get_units_info": {
-                "temperature": "1",
-                "pressure": "0", 
-                "wind": "0",
-                "rain": "0",
-                "light": "0",
-            },
-            "get_sensors_info?page=1": [],
+            "get_sensors_info?page=1": [
+                {
+                    "img": "wh54",
+                    "type": "66",
+                    "name": "Lds CH1",
+                    "id": "2B77",
+                    "batt": "5",
+                    "rssi": "-62",
+                    "signal": "4",
+                    "idst": "1"
+                }
+            ],
             "get_sensors_info?page=2": [],
             "get_iot_device_list": {"command": []},
         }
@@ -149,17 +180,36 @@ class TestEcoWittApi:
         assert data.device_info.dev_name == "Test Station"
         assert data.device_info.mac == "AA:BB:CC:DD:EE:FF"
         
-        # Check that weather data structure is populated with proper types
-        assert data.weather_data.tempinf == 22.0
-        assert data.weather_data.humidityin == 45.0
-        assert data.weather_data.tempf == 25.0
-        assert data.weather_data.humidity == 60.0
-        
-        # Check that all required data structures exist
-        assert hasattr(data, "channel_sensors")
-        assert hasattr(data, "sensor_diagnostics") 
-        assert hasattr(data, "iot_devices")
+        # Check that grouped structure is maintained
+        assert hasattr(data, "common_list")
+        assert hasattr(data, "wh25")
+        assert hasattr(data, "piezoRain")
+        assert hasattr(data, "ch_lds")
+        assert hasattr(data, "sensors")
         assert isinstance(data.iot_devices, list)
+        
+        # Test that values and units are parsed correctly
+        assert len(data.common_list) == 2
+        assert data.common_list[0].id == "0x02"
+        assert data.common_list[0].val == "20.7"
+        assert data.common_list[0].unit == "C"
+        assert data.common_list[1].val == "58"
+        assert data.common_list[1].unit == "%"
+        
+        # Test WH25 data
+        assert len(data.wh25) == 1
+        assert data.wh25[0].intemp == "22.0"
+        assert data.wh25[0].unit == "C"
+        
+        # Test LDS data with device ID mapping
+        assert len(data.ch_lds) == 1
+        assert data.ch_lds[0].channel == "1"
+        assert data.ch_lds[0].device_id == "2B77"  # Mapped from sensor info
+        
+        # Test sensor filtering (configured sensors only)
+        assert len(data.sensors) == 1
+        assert data.sensors[0].id == "2B77"
+        assert data.sensors[0].type == 66
         
         # Test mashumaro functionality
         device_dict = data.device_info.to_dict()

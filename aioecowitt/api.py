@@ -3,19 +3,31 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
 
 from .errors import RequestError
 from .models import (
-    ChannelSensors,
+    CO2Sensor,
+    CommonSensor,
+    ConsoleSensor,
     DeviceInfo,
     EcoWittDeviceData,
     IoTDevice,
-    SensorDiagnostics,
-    WeatherData,
-    WittiotDataTypes,
+    LDSSensor,
+    LeafSensor,
+    LeakSensor,
+    LightningSensor,
+    PM25Sensor,
+    PiezoRainSensor,
+    RainSensor,
+    SensorInfo,
+    SoilSensor,
+    TempHumiditySensor,
+    TempSensor,
+    WH25Data,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -73,7 +85,6 @@ class EcoWittApi:
         self._host = host
         self._session = session
         self._timeout = timeout
-        self._unit_temp = "0"  # Default to Celsius
 
     async def _request(
         self,
@@ -141,23 +152,26 @@ class EcoWittApi:
                 await session.close()
 
     @staticmethod
-    def _safe_float(value: Any) -> float | None:
-        """Safely convert value to float."""
-        if value is None or value == "" or value == "--" or value == "--.-":
-            return None
-        try:
-            # Remove common units and suffixes
-            if isinstance(value, str):
-                cleaned = (value.replace("%", "").replace("°", "").replace("V", "")
-                          .replace("hPa", "").replace("inHg", "").replace("mmHg", "")
-                          .replace("mm", "").replace("in", "").replace("mph", "")
-                          .replace("m/s", "").replace("km/h", "").replace("W/m2", ""))
-                if cleaned.strip() == "" or cleaned.strip() in ("--", "--.-", "---.-"):
-                    return None
-                return float(cleaned)
-            return float(value)
-        except (ValueError, TypeError):
-            return None
+    def _parse_value_and_unit(value_str: str) -> tuple[str, str | None]:
+        """Parse value and unit from a string like '20.7 C' or '58%'."""
+        if not value_str or value_str in ("--", "--.-", "---.-"):
+            return value_str, None
+        
+        # Handle percentage
+        if value_str.endswith("%"):
+            return value_str[:-1], "%"
+        
+        # Handle values with units separated by space
+        parts = value_str.split()
+        if len(parts) == 2:
+            return parts[0], parts[1]
+        
+        # Handle values with units attached (like mm/Hr)
+        for unit in ["mm/Hr", "in/Hr", "W/m2", "hPa", "inHg", "mmHg", "kPa", "m/s", "mph", "km/h", "knots", "ft/s", "mm", "in", "ft", "°C", "°F", "V"]:
+            if value_str.endswith(unit):
+                return value_str[:-len(unit)], unit
+        
+        return value_str, None
 
     @staticmethod
     def _safe_int(value: Any) -> int | None:
@@ -190,33 +204,61 @@ class EcoWittApi:
         
         if iot_type and iot_type in WFC_MAP:
             wfc_fields = WFC_MAP[iot_type]
-            result["rssi"] = self._safe_int(device_data.get(wfc_fields[0], ""))
+            rssi_val = device_data.get(wfc_fields[0], "")
+            if rssi_val and rssi_val != "--":
+                try:
+                    result["rssi"] = int(rssi_val)
+                except (ValueError, TypeError):
+                    pass
             
             if is_wfc and len(wfc_fields) > 4:
                 battery = device_data.get(wfc_fields[4], "")
                 result["iotbatt"] = battery  # Keep as string for now
             
             result["iot_running"] = device_data.get(RUN_MAP.get(iot_type, ""), "")
-            result["run_time"] = self._safe_int(device_data.get("run_time", 0))
+            run_time = device_data.get("run_time", 0)
+            if run_time:
+                try:
+                    result["run_time"] = int(run_time)
+                except (ValueError, TypeError):
+                    pass
             
             if iot_type in FORMAT_DATA_MAP:
                 format_fields = FORMAT_DATA_MAP[iot_type]
                 if len(format_fields) > 2:
-                    result[format_fields[2]] = self._safe_float(device_data.get(format_fields[2], ""))
+                    velocity = device_data.get(format_fields[2], "")
+                    if velocity:
+                        try:
+                            result[format_fields[2]] = float(velocity)
+                        except (ValueError, TypeError):
+                            pass
                 
                 # Calculate total
                 if len(format_fields) > 1:
-                    happen = self._safe_float(device_data.get(format_fields[0], 0)) or 0
-                    total = self._safe_float(device_data.get(format_fields[1], 0)) or 0
-                    result["velocity_total" if is_wfc else "elect_total"] = total - happen
+                    try:
+                        happen = float(device_data.get(format_fields[0], 0) or 0)
+                        total = float(device_data.get(format_fields[1], 0) or 0)
+                        result["velocity_total" if is_wfc else "elect_total"] = total - happen
+                    except (ValueError, TypeError):
+                        pass
                 
                 # Temperature data for water devices
                 if is_wfc and len(format_fields) > 4 and format_fields[4] in device_data:
-                    result["data_water_t"] = self._safe_float(device_data[format_fields[4]])
+                    temp_val = device_data[format_fields[4]]
+                    if temp_val:
+                        try:
+                            result["data_water_t"] = float(temp_val)
+                        except (ValueError, TypeError):
+                            pass
                 
                 # AC voltage for electric devices
                 if not is_wfc and len(format_fields) > 4 and format_fields[4] in device_data:
-                    result["data_ac_v"] = self._safe_float(device_data[format_fields[4]])
+                    voltage_val = device_data[format_fields[4]]
+                    if voltage_val:
+                        try:
+                            result["data_ac_v"] = float(voltage_val)
+                        except (ValueError, TypeError):
+                            pass
         
         # Remove None values
         return {k: v for k, v in result.items() if v is not None}
@@ -234,407 +276,39 @@ class EcoWittApi:
         )
 
     async def get_all_data(self) -> EcoWittDeviceData:
-        """Get all device data grouped for Home Assistant."""
+        """Get all device data keeping original grouped structure."""
         # Get basic device info
         device_info = await self.get_device_info()
         
         # Get all data endpoints
         live_data = await self._request(GW11268_API_LIVEDATA)
-        unit_data = await self._request(GW11268_API_UNIT)
         sensor_data_1 = await self._request(GW11268_API_SENID_1)
         sensor_data_2 = await self._request(GW11268_API_SENID_2)
         iot_list = await self._request(GW11268_API_IOTINFO)
         
-        # Parse data directly into structured models
-        weather_data = self._parse_weather_data(live_data, device_info)
-        channel_sensors = self._parse_channel_sensors(live_data)
-        sensor_diagnostics = self._parse_sensor_diagnostics(sensor_data_1, sensor_data_2)
+        # Parse sensor info
+        sensors = self._parse_sensor_info(sensor_data_1, sensor_data_2)
+        
+        # Parse live data keeping grouped structure
+        parsed_data = self._parse_live_data(live_data, sensors)
+        
+        # Parse IoT devices
         iot_devices = await self._parse_iot_devices(iot_list)
         
         return EcoWittDeviceData(
             device_info=device_info,
-            weather_data=weather_data,
-            channel_sensors=channel_sensors,
-            sensor_diagnostics=sensor_diagnostics,
+            sensors=sensors,
             iot_devices=iot_devices,
+            **parsed_data,
         )
 
-    def _parse_weather_data(
-        self,
-        live_data: dict[str, Any],
-        device_info: DeviceInfo,
-    ) -> WeatherData:
-        """Parse weather data from live data response."""
-        weather = WeatherData()
-        
-        # Set device info
-        weather.ver = device_info.version
-        weather.devname = device_info.dev_name
-        weather.mac = device_info.mac
-        
-        # Parse WH25 (indoor) data
-        if "wh25" in live_data and live_data["wh25"]:
-            wh25_data = live_data["wh25"][0]
-            weather.tempinf = self._safe_float(wh25_data.get("intemp"))
-            weather.humidityin = self._safe_float(wh25_data.get("inhumi"))
-            weather.baromrelin = self._safe_float(wh25_data.get("rel"))
-            weather.baromabsin = self._safe_float(wh25_data.get("abs"))
-            weather.co2in = self._safe_int(wh25_data.get("CO2"))
-            weather.co2in_24h = self._safe_int(wh25_data.get("CO2_24H"))
-        
-        # Parse common outdoor sensors
-        if "common_list" in live_data:
-            for item in live_data["common_list"]:
-                sensor_id = item.get("id")
-                value = item.get("val")
-                
-                if sensor_id == "0x02":
-                    weather.tempf = self._safe_float(value)
-                elif sensor_id == "0x07":
-                    weather.humidity = self._safe_float(value)
-                elif sensor_id == "0x03":
-                    weather.dewpoint = self._safe_float(value)
-                elif sensor_id == "0x0A":
-                    weather.winddir = self._safe_int(value)
-                elif sensor_id == "0x0B":
-                    weather.windspeedmph = self._safe_float(value)
-                elif sensor_id == "0x0C":
-                    weather.windgustmph = self._safe_float(value)
-                elif sensor_id == "0x15":
-                    weather.solarradiation = self._safe_float(value)
-                elif sensor_id == "0x17":
-                    weather.uv = self._safe_float(value)
-                elif sensor_id == "0x19":
-                    weather.daywindmax = self._safe_float(value)
-                elif sensor_id == "3":
-                    weather.feellike = self._safe_float(value)
-                elif sensor_id == "0x6D":
-                    weather.winddir10 = self._safe_int(value)
-                elif sensor_id == "4":
-                    weather.apparent = self._safe_float(value)
-                elif sensor_id == "5":
-                    weather.vpd = self._safe_float(value)
-        
-        # Parse rain data
-        if "rain" in live_data:
-            for item in live_data["rain"]:
-                sensor_id = item.get("id")
-                value = item.get("val")
-                
-                if sensor_id == "0x0D":
-                    weather.eventrainin = self._safe_float(value)
-                elif sensor_id == "0x0E":
-                    weather.rainratein = self._safe_float(value)
-                elif sensor_id == "0x10":
-                    weather.dailyrainin = self._safe_float(value)
-                elif sensor_id == "0x11":
-                    weather.weeklyrainin = self._safe_float(value)
-                elif sensor_id == "0x12":
-                    weather.monthlyrainin = self._safe_float(value)
-                elif sensor_id == "0x13":
-                    weather.yearlyrainin = self._safe_float(value)
-                elif sensor_id == "0x14":
-                    weather.totalrainin = self._safe_float(value)
-                elif sensor_id == "0x7C":
-                    weather.h24rainin = self._safe_float(value)
-        
-        # Parse piezo rain data
-        if "piezoRain" in live_data:
-            for item in live_data["piezoRain"]:
-                sensor_id = item.get("id")
-                value = item.get("val")
-                
-                if sensor_id == "0x0D":
-                    weather.erain_piezo = self._safe_float(value)
-                elif sensor_id == "0x0E":
-                    weather.rrain_piezo = self._safe_float(value)
-                elif sensor_id == "0x10":
-                    weather.drain_piezo = self._safe_float(value)
-                elif sensor_id == "0x11":
-                    weather.wrain_piezo = self._safe_float(value)
-                elif sensor_id == "0x12":
-                    weather.mrain_piezo = self._safe_float(value)
-                elif sensor_id == "0x13":
-                    weather.yrain_piezo = self._safe_float(value)
-                    weather.piezora_batt = self._safe_int(item.get("battery"))
-                elif sensor_id == "0x14":
-                    weather.train_piezo = self._safe_float(value)
-                elif sensor_id == "0x7C":
-                    weather.h24rain_piezo = self._safe_float(value)
-                elif sensor_id == "srain_piezo":
-                    weather.srain_piezo = "Raining" if value and str(value) != "0" else "No rain"
-        
-        # Parse console data
-        if "console" in live_data and live_data["console"]:
-            console_data = live_data["console"][0]
-            weather.con_batt = self._safe_int(console_data.get("battery"))
-            weather.con_batt_volt = self._safe_float(console_data.get("console_batt_volt"))
-            weather.con_ext_volt = self._safe_float(console_data.get("console_ext_volt"))
-        
-        # Parse CO2 data
-        if "co2" in live_data and live_data["co2"]:
-            co2_data = live_data["co2"][0]
-            weather.co2 = self._safe_int(co2_data.get("CO2"))
-            weather.co2_24h = self._safe_int(co2_data.get("CO2_24H"))
-            weather.pm25_co2 = self._safe_float(co2_data.get("PM25"))
-            weather.pm25_24h_co2 = self._safe_float(co2_data.get("PM25_24H"))
-            weather.pm10_co2 = self._safe_float(co2_data.get("PM10"))
-            weather.pm10_24h_co2 = self._safe_float(co2_data.get("PM10_24H"))
-            weather.pm10_aqi_co2 = self._safe_int(co2_data.get("PM10_RealAQI"))
-            weather.pm25_aqi_co2 = self._safe_int(co2_data.get("PM25_RealAQI"))
-            weather.tf_co2 = self._safe_float(co2_data.get("temp"))
-            weather.humi_co2 = self._safe_float(co2_data.get("humidity"))
-        
-        # Parse lightning data
-        if "lightning" in live_data and live_data["lightning"]:
-            lightning_data = live_data["lightning"][0]
-            weather.lightning = self._safe_float(lightning_data.get("distance"))
-            weather.lightning_time = lightning_data.get("timestamp")
-            weather.lightning_num = self._safe_int(lightning_data.get("count"))
-        
-        return weather
-
-    def _convert_solar_radiation(self, val: str | None, unit: str) -> str | None:
-        """Convert solar radiation based on unit."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        cleaned = val.replace("W/m2", "").replace("Kfc", "").replace("Klux", "")
-        if not self._is_valid_float(cleaned):
-            return ""
-        
-        val_float = float(cleaned)
-        if unit == "0":
-            return str(round(val_float * 1000 / 126.7, 2))
-        elif unit == "1":
-            return cleaned
-        else:
-            return str(round(val_float * 1000 * 10.76391 / 126.7, 2))
-
-    def _convert_lightning_distance(self, val: str | None, unit: str) -> str | None:
-        """Convert lightning distance based on unit."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        cleaned = val.replace("km", "").replace("nmi", "").replace("mi", "")
-        if not self._is_valid_float(cleaned):
-            return ""
-        
-        val_float = float(cleaned)
-        if unit in ("0", "1", "2"):
-            return str(round(val_float * 0.62137, 1))
-        else:
-            return str(round(val_float / 0.53996 * 0.62137, 1))
-
-    def _parse_channel_sensors(self, live_data: dict[str, Any]) -> ChannelSensors:
-        """Parse channel-based sensors from live data."""
-        sensors = ChannelSensors()
-        
-        # Parse PM2.5 channels
-        if "ch_pm25" in live_data:
-            for item in live_data["ch_pm25"]:
-                channel = item.get("channel")
-                if channel == "1":
-                    sensors.pm25_ch1 = self._safe_float(item.get("PM25"))
-                    sensors.pm25_24h_ch1 = self._safe_float(item.get("PM25_24H"))
-                    sensors.pm25_aqi_ch1 = self._safe_int(item.get("PM25_RealAQI"))
-                elif channel == "2":
-                    sensors.pm25_ch2 = self._safe_float(item.get("PM25"))
-                    sensors.pm25_24h_ch2 = self._safe_float(item.get("PM25_24H"))
-                    sensors.pm25_aqi_ch2 = self._safe_int(item.get("PM25_RealAQI"))
-                elif channel == "3":
-                    sensors.pm25_ch3 = self._safe_float(item.get("PM25"))
-                    sensors.pm25_24h_ch3 = self._safe_float(item.get("PM25_24H"))
-                    sensors.pm25_aqi_ch3 = self._safe_int(item.get("PM25_RealAQI"))
-                elif channel == "4":
-                    sensors.pm25_ch4 = self._safe_float(item.get("PM25"))
-                    sensors.pm25_24h_ch4 = self._safe_float(item.get("PM25_24H"))
-                    sensors.pm25_aqi_ch4 = self._safe_int(item.get("PM25_RealAQI"))
-        
-        # Parse leak sensors
-        if "ch_leak" in live_data:
-            for item in live_data["ch_leak"]:
-                channel = item.get("channel")
-                status = item.get("status")
-                if channel == "1":
-                    sensors.leak_ch1 = status
-                elif channel == "2":
-                    sensors.leak_ch2 = status
-                elif channel == "3":
-                    sensors.leak_ch3 = status
-                elif channel == "4":
-                    sensors.leak_ch4 = status
-        
-        # Parse temperature & humidity channels
-        if "ch_aisle" in live_data:
-            for item in live_data["ch_aisle"]:
-                channel = int(item.get("channel", 0))
-                temp = self._safe_float(item.get("temp"))
-                humidity = self._safe_float(item.get("humidity"))
-                
-                if channel == 1:
-                    sensors.temp_ch1 = temp
-                    sensors.humidity_ch1 = humidity
-                elif channel == 2:
-                    sensors.temp_ch2 = temp
-                    sensors.humidity_ch2 = humidity
-                elif channel == 3:
-                    sensors.temp_ch3 = temp
-                    sensors.humidity_ch3 = humidity
-                elif channel == 4:
-                    sensors.temp_ch4 = temp
-                    sensors.humidity_ch4 = humidity
-                elif channel == 5:
-                    sensors.temp_ch5 = temp
-                    sensors.humidity_ch5 = humidity
-                elif channel == 6:
-                    sensors.temp_ch6 = temp
-                    sensors.humidity_ch6 = humidity
-                elif channel == 7:
-                    sensors.temp_ch7 = temp
-                    sensors.humidity_ch7 = humidity
-                elif channel == 8:
-                    sensors.temp_ch8 = temp
-                    sensors.humidity_ch8 = humidity
-        
-        # Parse soil moisture
-        if "ch_soil" in live_data:
-            for item in live_data["ch_soil"]:
-                channel = int(item.get("channel", 0))
-                humidity = self._safe_float(item.get("humidity"))
-                
-                if channel == 1:
-                    sensors.soilmoisture_ch1 = humidity
-                elif channel == 2:
-                    sensors.soilmoisture_ch2 = humidity
-                elif channel == 3:
-                    sensors.soilmoisture_ch3 = humidity
-                elif channel == 4:
-                    sensors.soilmoisture_ch4 = humidity
-                elif channel == 5:
-                    sensors.soilmoisture_ch5 = humidity
-                elif channel == 6:
-                    sensors.soilmoisture_ch6 = humidity
-                elif channel == 7:
-                    sensors.soilmoisture_ch7 = humidity
-                elif channel == 8:
-                    sensors.soilmoisture_ch8 = humidity
-                elif channel == 9:
-                    sensors.soilmoisture_ch9 = humidity
-                elif channel == 10:
-                    sensors.soilmoisture_ch10 = humidity
-                elif channel == 11:
-                    sensors.soilmoisture_ch11 = humidity
-                elif channel == 12:
-                    sensors.soilmoisture_ch12 = humidity
-                elif channel == 13:
-                    sensors.soilmoisture_ch13 = humidity
-                elif channel == 14:
-                    sensors.soilmoisture_ch14 = humidity
-                elif channel == 15:
-                    sensors.soilmoisture_ch15 = humidity
-                elif channel == 16:
-                    sensors.soilmoisture_ch16 = humidity
-        
-        # Parse temperature-only channels
-        if "ch_temp" in live_data:
-            for item in live_data["ch_temp"]:
-                channel = int(item.get("channel", 0))
-                temp = self._safe_float(item.get("temp"))
-                
-                if channel == 1:
-                    sensors.tf_ch1 = temp
-                elif channel == 2:
-                    sensors.tf_ch2 = temp
-                elif channel == 3:
-                    sensors.tf_ch3 = temp
-                elif channel == 4:
-                    sensors.tf_ch4 = temp
-                elif channel == 5:
-                    sensors.tf_ch5 = temp
-                elif channel == 6:
-                    sensors.tf_ch6 = temp
-                elif channel == 7:
-                    sensors.tf_ch7 = temp
-                elif channel == 8:
-                    sensors.tf_ch8 = temp
-        
-        # Parse leaf wetness
-        if "ch_leaf" in live_data:
-            for item in live_data["ch_leaf"]:
-                channel = int(item.get("channel", 0))
-                humidity = self._safe_float(item.get("humidity"))
-                
-                if channel == 1:
-                    sensors.leaf_ch1 = humidity
-                elif channel == 2:
-                    sensors.leaf_ch2 = humidity
-                elif channel == 3:
-                    sensors.leaf_ch3 = humidity
-                elif channel == 4:
-                    sensors.leaf_ch4 = humidity
-                elif channel == 5:
-                    sensors.leaf_ch5 = humidity
-                elif channel == 6:
-                    sensors.leaf_ch6 = humidity
-                elif channel == 7:
-                    sensors.leaf_ch7 = humidity
-                elif channel == 8:
-                    sensors.leaf_ch8 = humidity
-        
-        # Parse LDS sensors
-        if "ch_lds" in live_data:
-            for item in live_data["ch_lds"]:
-                channel = int(item.get("channel", 0))
-                air = self._safe_float(item.get("air"))
-                depth = self._safe_float(item.get("depth"))
-                heat = self._safe_int(item.get("total_heat"))
-                height = self._safe_float(item.get("total_height"))
-                
-                if channel == 1:
-                    sensors.lds_air_ch1 = air
-                    sensors.lds_depth_ch1 = depth
-                    sensors.lds_heat_ch1 = heat
-                    sensors.lds_height_ch1 = height
-                elif channel == 2:
-                    sensors.lds_air_ch2 = air
-                    sensors.lds_depth_ch2 = depth
-                    sensors.lds_heat_ch2 = heat
-                    sensors.lds_height_ch2 = height
-                elif channel == 3:
-                    sensors.lds_air_ch3 = air
-                    sensors.lds_depth_ch3 = depth
-                    sensors.lds_heat_ch3 = heat
-                    sensors.lds_height_ch3 = height
-                elif channel == 4:
-                    sensors.lds_air_ch4 = air
-                    sensors.lds_depth_ch4 = depth
-                    sensors.lds_heat_ch4 = heat
-                    sensors.lds_height_ch4 = height
-        
-        return sensors
-
-    def _convert_distance(self, val: str | None, unit: str) -> str | None:
-        """Convert distance measurement."""
-        if not val or val in ("", "--", "--.-", "---.-"):
-            return val
-        
-        cleaned = val.replace("mm", "").replace("ft", "")
-        if not self._is_valid_float(cleaned):
-            return ""
-        
-        val_float = float(cleaned)
-        if unit == "0":  # Convert to feet
-            return str(round(val_float / 304.8, 2))
-        return cleaned
-
-    def _parse_sensor_diagnostics(
+    def _parse_sensor_info(
         self,
         sensor_data_1: dict[str, Any],
         sensor_data_2: dict[str, Any],
-    ) -> SensorDiagnostics:
-        """Parse sensor diagnostic data."""
-        diagnostics = SensorDiagnostics()
+    ) -> list[SensorInfo]:
+        """Parse sensor configuration information."""
+        sensors = []
         
         # Combine sensor data
         all_sensor_data = []
@@ -643,29 +317,261 @@ class EcoWittApi:
         if isinstance(sensor_data_2, list):
             all_sensor_data.extend(sensor_data_2)
         
-        # Map sensor types to diagnostic fields
-        sensor_mapping = {
-            22: "pm25_ch1", 23: "pm25_ch2", 24: "pm25_ch3", 25: "pm25_ch4",
-            27: "leak_ch1", 28: "leak_ch2", 29: "leak_ch3", 30: "leak_ch4",
-            49: "wh85", 48: "wh90", 0: "wh69", 1: "wh68", 3: "wh40",
-            4: "wh25", 5: "wh26", 2: "wh80", 26: "wh57", 39: "wh45",
-        }
-        
         for sensor in all_sensor_data:
-            sensor_type = int(sensor.get("type", -1))
-            if sensor_type in sensor_mapping:
-                base_name = sensor_mapping[sensor_type]
-                
-                # Skip invalid sensors
-                if sensor.get("id") in ("FFFFFFFF", "FFFFFFFE"):
-                    continue
-                
-                # Set battery, RSSI, and signal
-                setattr(diagnostics, f"{base_name}_batt", self._safe_int(sensor.get("batt")))
-                setattr(diagnostics, f"{base_name}_rssi", self._safe_int(sensor.get("rssi")))
-                setattr(diagnostics, f"{base_name}_signal", self._safe_int(sensor.get("signal")))
+            # Skip unconfigured devices
+            if sensor.get("id") == "FFFFFFFF":
+                continue
+            
+            sensor_info = SensorInfo(
+                img=sensor.get("img", ""),
+                type=int(sensor.get("type", -1)),
+                name=sensor.get("name", ""),
+                id=sensor.get("id", ""),
+                batt=self._safe_int(sensor.get("batt")),
+                rssi=self._safe_int(sensor.get("rssi")),
+                signal=self._safe_int(sensor.get("signal")),
+                version=sensor.get("version"),
+                idst=sensor.get("idst"),
+            )
+            sensors.append(sensor_info)
         
-        return diagnostics
+        return sensors
+
+    def _parse_live_data(
+        self,
+        live_data: dict[str, Any],
+        sensors: list[SensorInfo],
+    ) -> dict[str, Any]:
+        """Parse live data keeping original grouped structure."""
+        parsed = {}
+        
+        # Create device ID mapping for LDS sensors
+        lds_device_map = {}
+        for sensor in sensors:
+            if sensor.type in (66, 67, 68, 69):  # LDS sensor types
+                channel = str(sensor.type - 65)  # Convert type to channel
+                lds_device_map[channel] = sensor.id
+        
+        # Parse common_list
+        if "common_list" in live_data:
+            common_sensors = []
+            for item in live_data["common_list"]:
+                value, unit = self._parse_value_and_unit(item.get("val", ""))
+                sensor = CommonSensor(
+                    id=item.get("id", ""),
+                    val=value,
+                    unit=unit,
+                )
+                common_sensors.append(sensor)
+            parsed["common_list"] = common_sensors
+        else:
+            parsed["common_list"] = []
+        
+        # Parse rain data
+        if "rain" in live_data and live_data["rain"]:
+            rain_sensors = []
+            for item in live_data["rain"]:
+                value, unit = self._parse_value_and_unit(item.get("val", ""))
+                sensor = RainSensor(
+                    id=item.get("id", ""),
+                    val=value,
+                    unit=unit,
+                )
+                rain_sensors.append(sensor)
+            parsed["rain"] = rain_sensors
+        
+        # Parse piezo rain data
+        if "piezoRain" in live_data and live_data["piezoRain"]:
+            piezo_sensors = []
+            for item in live_data["piezoRain"]:
+                value, unit = self._parse_value_and_unit(item.get("val", ""))
+                sensor = PiezoRainSensor(
+                    id=item.get("id", ""),
+                    val=value,
+                    unit=unit,
+                    battery=item.get("battery"),
+                    voltage=item.get("voltage"),
+                    ws90cap_volt=item.get("ws90cap_volt"),
+                    ws90_ver=item.get("ws90_ver"),
+                )
+                piezo_sensors.append(sensor)
+            parsed["piezoRain"] = piezo_sensors
+        
+        # Parse WH25 data
+        if "wh25" in live_data and live_data["wh25"]:
+            wh25_list = []
+            for item in live_data["wh25"]:
+                sensor = WH25Data(
+                    intemp=item.get("intemp", ""),
+                    unit=item.get("unit", ""),
+                    inhumi=item.get("inhumi", ""),
+                    abs=item.get("abs", ""),
+                    rel=item.get("rel", ""),
+                    CO2=item.get("CO2"),
+                    CO2_24H=item.get("CO2_24H"),
+                )
+                wh25_list.append(sensor)
+            parsed["wh25"] = wh25_list
+        
+        # Parse PM2.5 channels
+        if "ch_pm25" in live_data and live_data["ch_pm25"]:
+            pm25_sensors = []
+            for item in live_data["ch_pm25"]:
+                sensor = PM25Sensor(
+                    channel=item.get("channel", ""),
+                    PM25=item.get("PM25"),
+                    PM25_24H=item.get("PM25_24H"),
+                    PM25_RealAQI=item.get("PM25_RealAQI"),
+                    battery=item.get("battery"),
+                    rssi=item.get("rssi"),
+                    signal=item.get("signal"),
+                )
+                pm25_sensors.append(sensor)
+            parsed["ch_pm25"] = pm25_sensors
+        
+        # Parse leak sensors
+        if "ch_leak" in live_data and live_data["ch_leak"]:
+            leak_sensors = []
+            for item in live_data["ch_leak"]:
+                sensor = LeakSensor(
+                    channel=item.get("channel", ""),
+                    status=item.get("status", ""),
+                    battery=item.get("battery"),
+                    rssi=item.get("rssi"),
+                    signal=item.get("signal"),
+                )
+                leak_sensors.append(sensor)
+            parsed["ch_leak"] = leak_sensors
+        
+        # Parse temperature & humidity channels
+        if "ch_aisle" in live_data and live_data["ch_aisle"]:
+            aisle_sensors = []
+            for item in live_data["ch_aisle"]:
+                sensor = TempHumiditySensor(
+                    channel=item.get("channel", ""),
+                    temp=item.get("temp"),
+                    humidity=item.get("humidity"),
+                    unit=item.get("unit"),
+                    battery=item.get("battery"),
+                    rssi=item.get("rssi"),
+                    signal=item.get("signal"),
+                )
+                aisle_sensors.append(sensor)
+            parsed["ch_aisle"] = aisle_sensors
+        
+        # Parse soil sensors
+        if "ch_soil" in live_data and live_data["ch_soil"]:
+            soil_sensors = []
+            for item in live_data["ch_soil"]:
+                sensor = SoilSensor(
+                    channel=item.get("channel", ""),
+                    humidity=item.get("humidity"),
+                    unit=item.get("unit"),
+                    battery=item.get("battery"),
+                    rssi=item.get("rssi"),
+                    signal=item.get("signal"),
+                )
+                soil_sensors.append(sensor)
+            parsed["ch_soil"] = soil_sensors
+        
+        # Parse temperature-only channels
+        if "ch_temp" in live_data and live_data["ch_temp"]:
+            temp_sensors = []
+            for item in live_data["ch_temp"]:
+                sensor = TempSensor(
+                    channel=item.get("channel", ""),
+                    temp=item.get("temp"),
+                    unit=item.get("unit"),
+                    battery=item.get("battery"),
+                    rssi=item.get("rssi"),
+                    signal=item.get("signal"),
+                )
+                temp_sensors.append(sensor)
+            parsed["ch_temp"] = temp_sensors
+        
+        # Parse leaf wetness
+        if "ch_leaf" in live_data and live_data["ch_leaf"]:
+            leaf_sensors = []
+            for item in live_data["ch_leaf"]:
+                sensor = LeafSensor(
+                    channel=item.get("channel", ""),
+                    humidity=item.get("humidity"),
+                    unit=item.get("unit"),
+                    battery=item.get("battery"),
+                    rssi=item.get("rssi"),
+                    signal=item.get("signal"),
+                )
+                leaf_sensors.append(sensor)
+            parsed["ch_leaf"] = leaf_sensors
+        
+        # Parse LDS sensors with device ID mapping
+        if "ch_lds" in live_data and live_data["ch_lds"]:
+            lds_sensors = []
+            for item in live_data["ch_lds"]:
+                channel = item.get("channel", "")
+                device_id = lds_device_map.get(channel)
+                
+                sensor = LDSSensor(
+                    channel=channel,
+                    name=item.get("name", ""),
+                    unit=item.get("unit", ""),
+                    battery=item.get("battery", ""),
+                    voltage=item.get("voltage", ""),
+                    air=item.get("air", ""),
+                    depth=item.get("depth", ""),
+                    total_height=item.get("total_height", ""),
+                    total_heat=item.get("total_heat", ""),
+                    device_id=device_id,
+                )
+                lds_sensors.append(sensor)
+            parsed["ch_lds"] = lds_sensors
+        
+        # Parse console data
+        if "console" in live_data and live_data["console"]:
+            console_list = []
+            for item in live_data["console"]:
+                sensor = ConsoleSensor(
+                    battery=item.get("battery", ""),
+                    console_batt_volt=item.get("console_batt_volt"),
+                    console_ext_volt=item.get("console_ext_volt"),
+                )
+                console_list.append(sensor)
+            parsed["console"] = console_list
+        
+        # Parse CO2 data
+        if "co2" in live_data and live_data["co2"]:
+            co2_list = []
+            for item in live_data["co2"]:
+                sensor = CO2Sensor(
+                    CO2=item.get("CO2"),
+                    CO2_24H=item.get("CO2_24H"),
+                    PM25=item.get("PM25"),
+                    PM25_24H=item.get("PM25_24H"),
+                    PM10=item.get("PM10"),
+                    PM10_24H=item.get("PM10_24H"),
+                    PM10_RealAQI=item.get("PM10_RealAQI"),
+                    PM25_RealAQI=item.get("PM25_RealAQI"),
+                    temp=item.get("temp"),
+                    humidity=item.get("humidity"),
+                    unit=item.get("unit"),
+                )
+                co2_list.append(sensor)
+            parsed["co2"] = co2_list
+        
+        # Parse lightning data
+        if "lightning" in live_data and live_data["lightning"]:
+            lightning_list = []
+            for item in live_data["lightning"]:
+                sensor = LightningSensor(
+                    distance=item.get("distance", ""),
+                    timestamp=item.get("timestamp"),
+                    count=item.get("count"),
+                    unit=item.get("unit"),
+                )
+                lightning_list.append(sensor)
+            parsed["lightning"] = lightning_list
+        
+        return parsed
 
     async def _parse_iot_devices(self, iot_list: dict[str, Any]) -> list[IoTDevice]:
         """Parse IoT devices from the list."""
@@ -684,13 +590,15 @@ class EcoWittApi:
 
     async def _update_iot_device(self, device_data: dict[str, Any]) -> dict[str, Any] | None:
         """Update IoT device with current status."""
+        base_data = {
+            "id": device_data.get("id", 0),
+            "model": device_data.get("model", 0),
+            "nickname": device_data.get("nickname", ""),
+            "rfnet_state": device_data.get("rfnet_state", 0),
+        }
+        
         if device_data.get("rfnet_state") == 0:
-            return {
-                "id": device_data.get("id", 0),
-                "model": device_data.get("model", 0),
-                "nickname": device_data.get("nickname", ""),
-                "rfnet_state": 0,
-            }
+            return base_data
         
         # Get current device status
         payload = {
@@ -706,18 +614,12 @@ class EcoWittApi:
             extracted_data = self._extract_iot_device_data(response, device_data["rfnet_state"])
             
             if extracted_data:
-                # Merge with original device data
-                result = {
-                    "id": device_data.get("id", 0),
-                    "model": device_data.get("model", 0),
-                    "rfnet_state": device_data.get("rfnet_state", 0),
-                }
-                result.update(extracted_data)
-                return result
+                base_data.update(extracted_data)
+            
+            return base_data
         except Exception as err:
             _LOGGER.debug("Failed to update device status: %s", err)
-        
-        return None
+            return base_data
 
     async def control_iot_device(self, device_id: int, model: int, switch_on: bool) -> dict[str, Any] | None:
         """Control an IoT device (turn on/off)."""
