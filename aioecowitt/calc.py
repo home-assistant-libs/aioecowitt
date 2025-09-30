@@ -101,6 +101,7 @@ def weather_datapoints(  # noqa: C901, PLR0912
         "yearlyrain",
         "totalrain",
         "rainrate",
+        "last24hrain",
     ):
         _convert_inches_to_mm(data, f"{key}in", f"{key}mm")
 
@@ -112,6 +113,7 @@ def weather_datapoints(  # noqa: C901, PLR0912
         "mrain_piezo",
         "yrain_piezo",
         "rrain_piezo",
+        "last24hrain_piezo",
     ):
         _convert_inches_to_mm(data, key, f"{key}mm")
 
