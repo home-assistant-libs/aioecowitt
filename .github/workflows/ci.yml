@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python 3.13
         uses: actions/setup-python@v6.0.0
         with:
-          python-version: 3.14
+          python-version: 3.14.0
       - name: Install dependencies
         run: |
           pip install -e .
@@ -32,7 +32,7 @@ jobs:
       - name: Set up Python 3.13
         uses: actions/setup-python@v6.0.0
         with:
-          python-version: 3.14
+          python-version: 3.14.0
       - name: Restore pre-commit cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
