@@ -598,22 +598,54 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "soilbatt14": EcoWittMapping("Soil Battery 14", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt15": EcoWittMapping("Soil Battery 15", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt16": EcoWittMapping("Soil Battery 16", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt4": EcoWittMapping("Soil Battery 4", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt5": EcoWittMapping("Soil Battery 5", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt6": EcoWittMapping("Soil Battery 6", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt7": EcoWittMapping("Soil Battery 7", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt8": EcoWittMapping("Soil Battery 8", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt9": EcoWittMapping("Soil Battery 9", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt10": EcoWittMapping("Soil Battery 10", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt11": EcoWittMapping("Soil Battery 11", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt12": EcoWittMapping("Soil Battery 12", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt13": EcoWittMapping("Soil Battery 13", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt14": EcoWittMapping("Soil Battery 14", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt15": EcoWittMapping("Soil Battery 15", EcoWittSensorTypes.BATTERY_VOLTAGE),
-    "soil_ec_batt16": EcoWittMapping("Soil Battery 16", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soil_ec_batt1": EcoWittMapping(
+        "Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt2": EcoWittMapping(
+        "Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt3": EcoWittMapping(
+        "Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt4": EcoWittMapping(
+        "Soil Battery 4", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt5": EcoWittMapping(
+        "Soil Battery 5", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt6": EcoWittMapping(
+        "Soil Battery 6", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt7": EcoWittMapping(
+        "Soil Battery 7", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt8": EcoWittMapping(
+        "Soil Battery 8", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt9": EcoWittMapping(
+        "Soil Battery 9", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt10": EcoWittMapping(
+        "Soil Battery 10", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt11": EcoWittMapping(
+        "Soil Battery 11", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt12": EcoWittMapping(
+        "Soil Battery 12", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt13": EcoWittMapping(
+        "Soil Battery 13", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt14": EcoWittMapping(
+        "Soil Battery 14", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt15": EcoWittMapping(
+        "Soil Battery 15", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt16": EcoWittMapping(
+        "Soil Battery 16", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
     "batt1": EcoWittMapping("Battery 1", EcoWittSensorTypes.BATTERY_BINARY),
     "batt2": EcoWittMapping("Battery 2", EcoWittSensorTypes.BATTERY_BINARY),
     "batt3": EcoWittMapping("Battery 3", EcoWittSensorTypes.BATTERY_BINARY),
