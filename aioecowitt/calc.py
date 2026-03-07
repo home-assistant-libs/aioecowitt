@@ -79,6 +79,22 @@ def weather_datapoints(  # noqa: C901, PLR0912
         ("tf_ch6", "tf_ch6c"),
         ("tf_ch7", "tf_ch7c"),
         ("tf_ch8", "tf_ch8c"),
+        ("soil_ec_temp1","soil_ec_temp1c"),
+        ("soil_ec_temp2","soil_ec_temp2c"),
+        ("soil_ec_temp3","soil_ec_temp3c"),
+        ("soil_ec_temp4","soil_ec_temp4c"),
+        ("soil_ec_temp5","soil_ec_temp5c"),
+        ("soil_ec_temp6","soil_ec_temp6c"),
+        ("soil_ec_temp7","soil_ec_temp7c"),
+        ("soil_ec_temp8","soil_ec_temp8c"),
+        ("soil_ec_temp9","soil_ec_temp9c"),
+        ("soil_ec_temp10","soil_ec_temp10c"),
+        ("soil_ec_temp11","soil_ec_temp11c"),
+        ("soil_ec_temp12","soil_ec_temp12c"),
+        ("soil_ec_temp13","soil_ec_temp13c"),
+        ("soil_ec_temp14","soil_ec_temp14c"),
+        ("soil_ec_temp15","soil_ec_temp15c"),
+        ("soil_ec_temp16","soil_ec_temp16c"),
     ):
         convert_fahrenheit_to_celsius(data, source, dst)
 

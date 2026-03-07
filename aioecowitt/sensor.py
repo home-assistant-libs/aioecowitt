@@ -104,6 +104,7 @@ class EcoWittSensorTypes(enum.IntEnum):
     PM4 = 35, float
     DISTANCE_MM = 36, int
     HEAT_COUNT = 37, int
+    SOIL_EC = 38, int
 
 
 @dataclass
@@ -284,6 +285,246 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "soilad14": EcoWittMapping("Soil AD 14", EcoWittSensorTypes.SOIL_RAWADC),
     "soilad15": EcoWittMapping("Soil AD 15", EcoWittSensorTypes.SOIL_RAWADC),
     "soilad16": EcoWittMapping("Soil AD 16", EcoWittSensorTypes.SOIL_RAWADC),
+    "soil_ec_hum1": EcoWittMapping(
+        "Soil Moisture 1", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum2": EcoWittMapping(
+        "Soil Moisture 2", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum3": EcoWittMapping(
+        "Soil Moisture 3", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum4": EcoWittMapping(
+        "Soil Moisture 4", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum5": EcoWittMapping(
+        "Soil Moisture 5", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum6": EcoWittMapping(
+        "Soil Moisture 6", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum7": EcoWittMapping(
+        "Soil Moisture 7", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum8": EcoWittMapping(
+        "Soil Moisture 8", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum9": EcoWittMapping(
+        "Soil Moisture 9", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum10": EcoWittMapping(
+        "Soil Moisture 10", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum11": EcoWittMapping(
+        "Soil Moisture 11", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum12": EcoWittMapping(
+        "Soil Moisture 12", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum13": EcoWittMapping(
+        "Soil Moisture 13", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum14": EcoWittMapping(
+        "Soil Moisture 14", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum15": EcoWittMapping(
+        "Soil Moisture 15", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum16": EcoWittMapping(
+        "Soil Moisture 16", EcoWittSensorTypes.SOIL_MOISTURE
+    ),
+    "soil_ec_hum_ad1": EcoWittMapping(
+        "Soil Moisture AD 1", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad2": EcoWittMapping(
+        "Soil Moisture AD 2", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad3": EcoWittMapping(
+        "Soil Moisture AD 3", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad4": EcoWittMapping(
+        "Soil Moisture AD 4", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad5": EcoWittMapping(
+        "Soil Moisture AD 5", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad6": EcoWittMapping(
+        "Soil Moisture AD 6", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad7": EcoWittMapping(
+        "Soil Moisture AD 7", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad8": EcoWittMapping(
+        "Soil Moisture AD 8", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad9": EcoWittMapping(
+        "Soil Moisture AD 9", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad10": EcoWittMapping(
+        "Soil Moisture AD 10", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad11": EcoWittMapping(
+        "Soil Moisture AD 11", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad12": EcoWittMapping(
+        "Soil Moisture AD 12", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad13": EcoWittMapping(
+        "Soil Moisture AD 13", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad14": EcoWittMapping(
+        "Soil Moisture AD 14", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad15": EcoWittMapping(
+        "Soil Moisture AD 15", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_hum_ad16": EcoWittMapping(
+        "Soil Moisture AD 16", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec1": EcoWittMapping(
+        "Soil Electrical Conductivity 1", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec2": EcoWittMapping(
+        "Soil Electrical Conductivity 2", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec3": EcoWittMapping(
+        "Soil Electrical Conductivity 3", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec4": EcoWittMapping(
+        "Soil Electrical Conductivity 4", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec5": EcoWittMapping(
+        "Soil Electrical Conductivity 5", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec6": EcoWittMapping(
+        "Soil Electrical Conductivity 6", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec7": EcoWittMapping(
+        "Soil Electrical Conductivity 7", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec8": EcoWittMapping(
+        "Soil Electrical Conductivity 8", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec9": EcoWittMapping(
+        "Soil Electrical Conductivity 9", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec10": EcoWittMapping(
+        "Soil Electrical Conductivity 10", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec11": EcoWittMapping(
+        "Soil Electrical Conductivity 11", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec12": EcoWittMapping(
+        "Soil Electrical Conductivity 12", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec13": EcoWittMapping(
+        "Soil Electrical Conductivity 13", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec14": EcoWittMapping(
+        "Soil Electrical Conductivity 14", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec15": EcoWittMapping(
+        "Soil Electrical Conductivity 15", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec16": EcoWittMapping(
+        "Soil Electrical Conductivity 16", EcoWittSensorTypes.SOIL_EC
+    ),
+    "soil_ec_ad1": EcoWittMapping(
+        "Soil Electrical Conductivity AD 1", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad2": EcoWittMapping(
+        "Soil Electrical Conductivity AD 2", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad3": EcoWittMapping(
+        "Soil Electrical Conductivity AD 3", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad4": EcoWittMapping(
+        "Soil Electrical Conductivity AD 4", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad5": EcoWittMapping(
+        "Soil Electrical Conductivity AD 5", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad6": EcoWittMapping(
+        "Soil Electrical Conductivity AD 6", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad7": EcoWittMapping(
+        "Soil Electrical Conductivity AD 7", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad8": EcoWittMapping(
+        "Soil Electrical Conductivity AD 8", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad9": EcoWittMapping(
+        "Soil Electrical Conductivity AD 9", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad10": EcoWittMapping(
+        "Soil Electrical Conductivity AD 10", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad11": EcoWittMapping(
+        "Soil Electrical Conductivity AD 11", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad12": EcoWittMapping(
+        "Soil Electrical Conductivity AD 12", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad13": EcoWittMapping(
+        "Soil Electrical Conductivity AD 13", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad14": EcoWittMapping(
+        "Soil Electrical Conductivity AD 14", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad15": EcoWittMapping(
+        "Soil Electrical Conductivity AD 15", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_ad16": EcoWittMapping(
+        "Soil Electrical Conductivity AD 16", EcoWittSensorTypes.SOIL_RAWADC
+    ),
+    "soil_ec_temp1": EcoWittMapping(
+        "Soil Temperature 1", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp2": EcoWittMapping(
+        "Soil Temperature 2", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp3": EcoWittMapping(
+        "Soil Temperature 3", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp4": EcoWittMapping(
+        "Soil Temperature 4", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp5": EcoWittMapping(
+        "Soil Temperature 5", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp6": EcoWittMapping(
+        "Soil Temperature 6", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp7": EcoWittMapping(
+        "Soil Temperature 7", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp8": EcoWittMapping(
+        "Soil Temperature 8", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp9": EcoWittMapping(
+        "Soil Temperature 9", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp10": EcoWittMapping(
+        "Soil Temperature 10", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp11": EcoWittMapping(
+        "Soil Temperature 11", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp12": EcoWittMapping(
+        "Soil Temperature 12", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp13": EcoWittMapping(
+        "Soil Temperature 13", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp14": EcoWittMapping(
+        "Soil Temperature 14", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp15": EcoWittMapping(
+        "Soil Temperature 15", EcoWittSensorTypes.TEMPERATURE_F
+    ),
+    "soil_ec_temp16": EcoWittMapping(
+        "Soil Temperature 16", EcoWittSensorTypes.TEMPERATURE_F
+    ),
     "pm25_ch1": EcoWittMapping("PM2.5 1", EcoWittSensorTypes.PM25),
     "pm25_ch2": EcoWittMapping("PM2.5 2", EcoWittSensorTypes.PM25),
     "pm25_ch3": EcoWittMapping("PM2.5 3", EcoWittSensorTypes.PM25),
@@ -357,6 +598,54 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "soilbatt14": EcoWittMapping("Soil Battery 14", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt15": EcoWittMapping("Soil Battery 15", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt16": EcoWittMapping("Soil Battery 16", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "soil_ec_batt1": EcoWittMapping(
+        "Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt2": EcoWittMapping(
+        "Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt3": EcoWittMapping(
+        "Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt4": EcoWittMapping(
+        "Soil Battery 4", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt5": EcoWittMapping(
+        "Soil Battery 5", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt6": EcoWittMapping(
+        "Soil Battery 6", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt7": EcoWittMapping(
+        "Soil Battery 7", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt8": EcoWittMapping(
+        "Soil Battery 8", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt9": EcoWittMapping(
+        "Soil Battery 9", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt10": EcoWittMapping(
+        "Soil Battery 10", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt11": EcoWittMapping(
+        "Soil Battery 11", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt12": EcoWittMapping(
+        "Soil Battery 12", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt13": EcoWittMapping(
+        "Soil Battery 13", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt14": EcoWittMapping(
+        "Soil Battery 14", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt15": EcoWittMapping(
+        "Soil Battery 15", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
+    "soil_ec_batt16": EcoWittMapping(
+        "Soil Battery 16", EcoWittSensorTypes.BATTERY_VOLTAGE
+    ),
     "batt1": EcoWittMapping("Battery 1", EcoWittSensorTypes.BATTERY_BINARY),
     "batt2": EcoWittMapping("Battery 2", EcoWittSensorTypes.BATTERY_BINARY),
     "batt3": EcoWittMapping("Battery 3", EcoWittSensorTypes.BATTERY_BINARY),
