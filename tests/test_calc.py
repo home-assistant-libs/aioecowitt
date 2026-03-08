@@ -2,7 +2,7 @@
 
 from aioecowitt import calc
 
-from .const import EASYWEATHER_DATA, GW2000A_DATA
+from .const import EASYWEATHER_DATA, GW1200B_WN38_DATA, GW2000A_DATA
 
 
 def test_gw2000a_v2() -> None:
@@ -67,6 +67,74 @@ def test_gw2000a_v2() -> None:
         "ws90cap_volt": 5.4,
         "yrain_piezo": 0.0,
         "yrain_piezomm": 0.0,
+    }
+
+
+def test_gw1200b_wn38() -> None:
+    """Test GW1200B with WN38 Black Globe Thermometer sensors."""
+    values = calc.weather_datapoints(GW1200B_WN38_DATA.copy())
+
+    assert values == {
+        "PASSKEY": "0123456789ABCDEF0123456789ABCDEF",
+        "baromabshpa": 832.9,
+        "baromabsin": 24.598,
+        "baromrelhpa": 1013.3,
+        "baromrelin": 29.926,
+        "bgt": 43.16,
+        "bgtbatt": 1.54,
+        "bgtc": 6.2,
+        "dailyrainin": 0.098,
+        "dailyrainmm": 2.5,
+        "dateutc": "2026-03-08 03:57:53",
+        "dewpointc": -7.2,
+        "dewpointf": 19.1,
+        "dewpointinc": -0.8,
+        "dewpointinf": 30.5,
+        "eventrainin": 0.0,
+        "eventrainmm": 0.0,
+        "freq": "915M",
+        "hourlyrainin": 0.0,
+        "hourlyrainmm": 0.0,
+        "humidity": 34,
+        "humidityin": 31,
+        "interval": "60",
+        "maxdailygust": 16.78,
+        "maxdailygustkmh": 27.0,
+        "model": "GW1200B",
+        "monthlyrainin": 0.244,
+        "monthlyrainmm": 6.2,
+        "rainratein": 0.0,
+        "rainratemm": 0.0,
+        "runtime": "25268",
+        "heap": "79076",
+        "solarradiation": 0.0,
+        "solarradiation_lux": 0.0,
+        "stationtype": "GW1200B_V1.4.6",
+        "tempc": 7.7,
+        "tempf": 45.86,
+        "tempfeelsc": 6.2,
+        "tempfeelsf": 43.1,
+        "tempinc": 16.3,
+        "tempinf": 61.34,
+        "totalrainin": 0.248,
+        "totalrainmm": 6.3,
+        "uv": 0,
+        "wbgt": 37.94,
+        "wbgtc": 3.3,
+        "weeklyrainin": 0.244,
+        "weeklyrainmm": 6.2,
+        "wh40batt": 1.4,
+        "wh57batt": 80,
+        "wh90batt": 2.9,
+        "windchillc": 6.2,
+        "windchillf": 43.1,
+        "winddir": 325,
+        "windgustkmh": 11.9,
+        "windgustmph": 7.38,
+        "windspeedkmh": 8.6,
+        "windspeedmph": 5.37,
+        "yearlyrainin": 0.248,
+        "yearlyrainmm": 6.3,
     }
 
 
