@@ -285,33 +285,15 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "soilad14": EcoWittMapping("Soil AD 14", EcoWittSensorTypes.SOIL_RAWADC),
     "soilad15": EcoWittMapping("Soil AD 15", EcoWittSensorTypes.SOIL_RAWADC),
     "soilad16": EcoWittMapping("Soil AD 16", EcoWittSensorTypes.SOIL_RAWADC),
-    "soil_ec_hum1": EcoWittMapping(
-        "Soil Moisture 1", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum2": EcoWittMapping(
-        "Soil Moisture 2", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum3": EcoWittMapping(
-        "Soil Moisture 3", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum4": EcoWittMapping(
-        "Soil Moisture 4", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum5": EcoWittMapping(
-        "Soil Moisture 5", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum6": EcoWittMapping(
-        "Soil Moisture 6", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum7": EcoWittMapping(
-        "Soil Moisture 7", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum8": EcoWittMapping(
-        "Soil Moisture 8", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
-    "soil_ec_hum9": EcoWittMapping(
-        "Soil Moisture 9", EcoWittSensorTypes.SOIL_MOISTURE
-    ),
+    "soil_ec_hum1": EcoWittMapping("Soil Moisture 1", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum2": EcoWittMapping("Soil Moisture 2", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum3": EcoWittMapping("Soil Moisture 3", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum4": EcoWittMapping("Soil Moisture 4", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum5": EcoWittMapping("Soil Moisture 5", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum6": EcoWittMapping("Soil Moisture 6", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum7": EcoWittMapping("Soil Moisture 7", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum8": EcoWittMapping("Soil Moisture 8", EcoWittSensorTypes.SOIL_MOISTURE),
+    "soil_ec_hum9": EcoWittMapping("Soil Moisture 9", EcoWittSensorTypes.SOIL_MOISTURE),
     "soil_ec_hum10": EcoWittMapping(
         "Soil Moisture 10", EcoWittSensorTypes.SOIL_MOISTURE
     ),
