@@ -190,6 +190,10 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "dewpoint7c": EcoWittMapping("Dewpoint 7", EcoWittSensorTypes.TEMPERATURE_C),
     "dewpoint8c": EcoWittMapping("Dewpoint 8", EcoWittSensorTypes.TEMPERATURE_C),
     "windchillc": EcoWittMapping("Windchill", EcoWittSensorTypes.TEMPERATURE_C),
+    "bgtc": EcoWittMapping("Black Globe Temperature", EcoWittSensorTypes.TEMPERATURE_C),
+    "wbgtc": EcoWittMapping(
+        "Wet Bulb Globe Temperature", EcoWittSensorTypes.TEMPERATURE_C
+    ),
     "tempf": EcoWittMapping("Outdoor Temperature", EcoWittSensorTypes.TEMPERATURE_F),
     "tempfeelsf": EcoWittMapping(
         "Feels like Temperature",
@@ -215,6 +219,10 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "dewpoint7f": EcoWittMapping("Dewpoint 7", EcoWittSensorTypes.TEMPERATURE_F),
     "dewpoint8f": EcoWittMapping("Dewpoint 8", EcoWittSensorTypes.TEMPERATURE_F),
     "windchillf": EcoWittMapping("Windchill", EcoWittSensorTypes.TEMPERATURE_F),
+    "bgt": EcoWittMapping("Black Globe Temperature", EcoWittSensorTypes.TEMPERATURE_F),
+    "wbgt": EcoWittMapping(
+        "Wet Bulb Globe Temperature", EcoWittSensorTypes.TEMPERATURE_F
+    ),
     "solarradiation": EcoWittMapping(
         "Solar Radiation", EcoWittSensorTypes.WATT_METERS_SQUARED
     ),
@@ -341,6 +349,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "wh80batt": EcoWittMapping("WH80 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh85batt": EcoWittMapping("WH85 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "bgtbatt": EcoWittMapping("WN38 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),

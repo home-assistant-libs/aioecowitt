@@ -79,6 +79,8 @@ def weather_datapoints(  # noqa: C901, PLR0912
         ("tf_ch6", "tf_ch6c"),
         ("tf_ch7", "tf_ch7c"),
         ("tf_ch8", "tf_ch8c"),
+        ("bgt", "bgtc"),
+        ("wbgt", "wbgtc"),
     ):
         convert_fahrenheit_to_celsius(data, source, dst)
 
