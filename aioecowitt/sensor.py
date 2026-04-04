@@ -37,8 +37,6 @@ class EcoWittSensor:
         self.last_update_m = last_update_m
 
         # Set the value
-        if self.value == value:
-            return
         self.value = value
 
         # notify listeners
