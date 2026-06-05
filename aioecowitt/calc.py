@@ -95,6 +95,8 @@ def weather_datapoints(  # noqa: C901, PLR0912
         ("soil_ec_temp14", "soil_ec_temp14c"),
         ("soil_ec_temp15", "soil_ec_temp15c"),
         ("soil_ec_temp16", "soil_ec_temp16c"),
+        ("bgt", "bgtc"),
+        ("wbgt", "wbgtc"),
     ):
         convert_fahrenheit_to_celsius(data, source, dst)
 
