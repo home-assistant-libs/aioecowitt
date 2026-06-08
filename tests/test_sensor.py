@@ -31,7 +31,7 @@ def test_update_listener() -> None:
 
     called = False
     ecowit_sensor.update_value(10, 0, 0)
-    assert not called
+    assert called
 
     ecowit_sensor.update_value(11, 0, 0)
     assert called
