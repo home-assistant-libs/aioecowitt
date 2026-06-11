@@ -503,6 +503,54 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "soil_ec_temp16": EcoWittMapping(
         "Soil Temperature 16", EcoWittSensorTypes.TEMPERATURE_F
     ),
+    "soil_ec_temp1c": EcoWittMapping(
+        "Soil Temperature 1", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp2c": EcoWittMapping(
+        "Soil Temperature 2", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp3c": EcoWittMapping(
+        "Soil Temperature 3", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp4c": EcoWittMapping(
+        "Soil Temperature 4", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp5c": EcoWittMapping(
+        "Soil Temperature 5", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp6c": EcoWittMapping(
+        "Soil Temperature 6", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp7c": EcoWittMapping(
+        "Soil Temperature 7", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp8c": EcoWittMapping(
+        "Soil Temperature 8", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp9c": EcoWittMapping(
+        "Soil Temperature 9", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp10c": EcoWittMapping(
+        "Soil Temperature 10", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp11c": EcoWittMapping(
+        "Soil Temperature 11", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp12c": EcoWittMapping(
+        "Soil Temperature 12", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp13c": EcoWittMapping(
+        "Soil Temperature 13", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp14c": EcoWittMapping(
+        "Soil Temperature 14", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp15c": EcoWittMapping(
+        "Soil Temperature 15", EcoWittSensorTypes.TEMPERATURE_C
+    ),
+    "soil_ec_temp16c": EcoWittMapping(
+        "Soil Temperature 16", EcoWittSensorTypes.TEMPERATURE_C
+    ),
     "pm25_ch1": EcoWittMapping("PM2.5 1", EcoWittSensorTypes.PM25),
     "pm25_ch2": EcoWittMapping("PM2.5 2", EcoWittSensorTypes.PM25),
     "pm25_ch3": EcoWittMapping("PM2.5 3", EcoWittSensorTypes.PM25),
