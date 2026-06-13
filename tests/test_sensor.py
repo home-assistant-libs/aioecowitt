@@ -42,6 +42,7 @@ def test_update_listener() -> None:
     [
         ("heap", GW2000A_V3_DATA["heap"], GW2000A_V3_DATA),
         ("vpd", 0.091, {**GW2000A_V3_DATA, "vpd": "0.091"}),
+        ("wn20batt", 2.68, {**GW2000A_V3_DATA, "wn20batt": "2.68"}),
     ],
 )
 async def test_sensor(
