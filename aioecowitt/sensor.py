@@ -619,6 +619,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "wh85batt": EcoWittMapping("WH85 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "wh90batt": EcoWittMapping("WH90 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "bgtbatt": EcoWittMapping("WN38 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
+    "wn20batt": EcoWittMapping("WN20 Battery", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt1": EcoWittMapping("Soil Battery 1", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt2": EcoWittMapping("Soil Battery 2", EcoWittSensorTypes.BATTERY_VOLTAGE),
     "soilbatt3": EcoWittMapping("Soil Battery 3", EcoWittSensorTypes.BATTERY_VOLTAGE),
