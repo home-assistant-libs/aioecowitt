@@ -1,5 +1,5 @@
 mypy==1.20.1
-pre-commit==4.6.0
+pre-commit==4.6.1
 pydocstyle==6.3.0
 pylint==4.0.6
 pytest==9.1.1
