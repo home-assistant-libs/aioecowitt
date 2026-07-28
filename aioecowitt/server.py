@@ -31,9 +31,9 @@ class EcoWittListener:
         self.path: str = path
 
         # webserver
-        self.server: None | web.Server = None
-        self.runner: None | web.ServerRunner = None
-        self.site: None | web.TCPSite = None
+        self.server: web.Server | None = None
+        self.runner: web.ServerRunner | None = None
+        self.site: web.TCPSite | None = None
 
         # internal data
         self.last_values: dict[str, dict[str, str | None]] = {}
