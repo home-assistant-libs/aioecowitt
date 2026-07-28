@@ -52,6 +52,8 @@ ignore = [
 
     "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable
 
+    "CPY001", # Missing copyright notice at top of file
+
     # Conflicts with the Ruff formatter
     "COM812",
 
