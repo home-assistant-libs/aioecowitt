@@ -21,14 +21,14 @@ class EcoWittSensor:
     key: str
     stype: EcoWittSensorTypes
     station: EcoWittStation
-    value: None | str | int | float | dt.datetime = field(default=None, init=False)
+    value: str | int | float | dt.datetime | None = field(default=None, init=False)
     last_update: float = field(default=0, init=False)
     last_update_m: float = field(default=0, init=False)
     update_cb: list[Callable[[], None]] = field(default_factory=list, init=False)
 
     def update_value(
         self,
-        value: None | str | float | dt.datetime,
+        value: str | float | dt.datetime | None,
         last_update: float,
         last_update_m: float,
     ) -> None:

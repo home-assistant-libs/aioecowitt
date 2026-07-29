@@ -17,7 +17,7 @@ class EcoWittStation:
     model: str
     frequence: str | None
     key: str
-    version: None | str = field(default=None)
+    version: str | None = field(default=None)
 
 
 def extract_station(data: dict[str, str]) -> EcoWittStation:
