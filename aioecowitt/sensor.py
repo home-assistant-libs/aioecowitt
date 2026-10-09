@@ -851,6 +851,7 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     "dateutc": EcoWittMapping("dateutc", EcoWittSensorTypes.INTERNAL),
     "fields": EcoWittMapping("field list", EcoWittSensorTypes.INTERNAL),
     "ws85cap_volt": EcoWittMapping("WH85 Capacitor", EcoWittSensorTypes.VOLTAGE),
+    "ws85_ver": EcoWittMapping("WH85 Firmware Version", EcoWittSensorTypes.INTERNAL),
     "ws90cap_volt": EcoWittMapping("WH90 Capacitor", EcoWittSensorTypes.VOLTAGE),
     "rrain_piezo": EcoWittMapping(
         "Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_INCHES
