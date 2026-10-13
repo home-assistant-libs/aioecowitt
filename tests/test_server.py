@@ -3,7 +3,7 @@
 import pytest
 from pytest_aiohttp import AiohttpClient
 
-from aioecowitt import EcoWittSensorTypes, server
+from aioecowitt import server
 
 from .const import EASYWEATHER_DATA, GW2000A_DATA
 
@@ -95,8 +95,8 @@ async def test_server_firmware_version(
 ) -> None:
     """Test the WS85 firmware version field is handled.
 
-    ``ws85_ver`` is diagnostic information rather than a measurement, so it is
-    mapped as INTERNAL instead of being reported as an unhandled sensor type.
+    ``ws85_ver`` is extracted as the station firmware version, same as
+    ``ws90_ver``, instead of being reported as an unhandled sensor type.
     See #425.
     """
     data = {**GW2000A_DATA, "ws85_ver": "118"}
@@ -105,6 +105,5 @@ async def test_server_firmware_version(
 
     assert "Unhandled sensor type ws85_ver" not in caplog.text
 
-    sensor = next(s for s in ecowitt_server.sensors.values() if s.key == "ws85_ver")
-    assert sensor.stype is EcoWittSensorTypes.INTERNAL
-    assert sensor.value == "118"
+    station = next(iter(ecowitt_server.stations.values()))
+    assert station.version == "118"
