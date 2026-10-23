@@ -1,5 +1,6 @@
 """EcoWitt server tests."""
 
+import pytest
 from pytest_aiohttp import AiohttpClient
 
 from aioecowitt import server
@@ -85,3 +86,24 @@ async def test_server_multi_stations(
     assert len(sensors) == 91
     assert len(ecowitt_server.sensors) == 91
     assert len(ecowitt_server.stations) == 2
+
+
+async def test_server_firmware_version(
+    ecowitt_server: server.EcoWittListener,
+    ecowitt_http: AiohttpClient,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test the WS85 firmware version field is handled.
+
+    ``ws85_ver`` is extracted as the station firmware version, same as
+    ``ws90_ver``, instead of being reported as an unhandled sensor type.
+    See #425.
+    """
+    data = {**GW2000A_DATA, "ws85_ver": "118"}
+    resp = await ecowitt_http.post("/", data=data)
+    assert resp.status == 200
+
+    assert "Unhandled sensor type ws85_ver" not in caplog.text
+
+    station = next(iter(ecowitt_server.stations.values()))
+    assert station.version == "118"

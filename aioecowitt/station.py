@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 
 VERSION_FIELDS = {
     "ws90_ver",
+    "ws85_ver",
 }
 
 
