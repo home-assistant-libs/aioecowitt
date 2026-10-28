@@ -46,6 +46,8 @@ def test_gw2000a_v2() -> None:
         "tempfeelsf": 85.5,
         "tempinc": 26.0,
         "tempinf": 78.8,
+        "total_piezo": 15.827,
+        "total_piezomm": 402.0,
         "uv": 4,
         "wh90batt": 2.74,
         "console_batt": 2.5,

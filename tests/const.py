@@ -49,6 +49,7 @@ GW2000A_DATA = {
     "wrain_piezo": "0.000",
     "mrain_piezo": "0.000",
     "yrain_piezo": "0.000",
+    "total_piezo": "15.827",
     "leak_ch1": "0",
     "leakbatt1": "5",
     "soilad1": "120",
