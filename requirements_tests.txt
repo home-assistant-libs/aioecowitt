@@ -1,4 +1,4 @@
-mypy==2.4.0
+mypy==2.4.1
 pre-commit==4.7.0
 pydocstyle==6.3.0
 pylint==4.1.3
