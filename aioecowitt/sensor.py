@@ -877,6 +877,9 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
         "24h Rain Piezo", EcoWittSensorTypes.RAIN_COUNT_INCHES
     ),
     "srain_piezo": EcoWittMapping("Rain State Piezo", EcoWittSensorTypes.RAIN_STATE),
+    "total_piezo": EcoWittMapping(
+        "Total Rain Piezo", EcoWittSensorTypes.RAIN_COUNT_INCHES
+    ),
     "rrain_piezomm": EcoWittMapping("Rain Rate Piezo", EcoWittSensorTypes.RAIN_RATE_MM),
     "erain_piezomm": EcoWittMapping(
         "Event Rain Piezo", EcoWittSensorTypes.RAIN_COUNT_MM
@@ -898,6 +901,9 @@ SENSOR_MAP: dict[str, EcoWittMapping] = {
     ),
     "last24hrain_piezomm": EcoWittMapping(
         "24h Rain Piezo", EcoWittSensorTypes.RAIN_COUNT_MM
+    ),
+    "total_piezomm": EcoWittMapping(
+        "Total Rain Piezo", EcoWittSensorTypes.RAIN_COUNT_MM
     ),
     "runtime": EcoWittMapping("Runtime", EcoWittSensorTypes.INTERNAL),
     "interval": EcoWittMapping("Interval", EcoWittSensorTypes.INTERNAL),

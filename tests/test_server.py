@@ -26,8 +26,8 @@ async def test_server_start(
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 52
-    assert len(ecowitt_server.sensors) == 52
+    assert len(sensors) == 54
+    assert len(ecowitt_server.sensors) == 54
     assert len(ecowitt_server.stations) == 1
 
     assert "PASSKEY" not in ecowitt_server.last_values[GW2000A_DATA["PASSKEY"]]
@@ -55,8 +55,8 @@ async def test_server_token(
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 52
-    assert len(ecowitt_server.sensors) == 52
+    assert len(sensors) == 54
+    assert len(ecowitt_server.sensors) == 54
     assert len(ecowitt_server.stations) == 1
 
 
@@ -82,6 +82,6 @@ async def test_server_multi_stations(
     text = await resp.text()
     assert text == "OK"
 
-    assert len(sensors) == 91
-    assert len(ecowitt_server.sensors) == 91
+    assert len(sensors) == 93
+    assert len(ecowitt_server.sensors) == 93
     assert len(ecowitt_server.stations) == 2
