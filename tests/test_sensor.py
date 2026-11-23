@@ -41,6 +41,7 @@ def test_update_listener() -> None:
     ("sensor_key", "expected_value", "request_data"),
     [
         ("heap", GW2000A_V3_DATA["heap"], GW2000A_V3_DATA),
+        ("rstreason", "3", {**GW2000A_V3_DATA, "rstreason": "3"}),
         ("vpd", 0.091, {**GW2000A_V3_DATA, "vpd": "0.091"}),
         ("wn20batt", 2.68, {**GW2000A_V3_DATA, "wn20batt": "2.68"}),
     ],
